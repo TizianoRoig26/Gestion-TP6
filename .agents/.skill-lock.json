@@ -1,0 +1,149 @@
+{
+  "version": 3,
+  "skills": {
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/skills.git",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "skillFolderHash": "3013fdeb8a11b10b1eb795ec3ae8bfca38f7c26d",
+      "installedAt": "2026-04-01T11:40:54.117Z",
+      "updatedAt": "2026-04-01T11:40:54.117Z"
+    },
+    "vercel-react-native-skills": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/agent-skills.git",
+      "skillPath": "skills/react-native-skills/SKILL.md",
+      "skillFolderHash": "8b4c6a51914e2111ab6f4f00cb81778652aa241d",
+      "installedAt": "2026-04-01T11:47:34.564Z",
+      "updatedAt": "2026-04-01T11:47:34.564Z"
+    },
+    "nodejs-backend-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/wshobson/agents.git",
+      "skillPath": "plugins/javascript-typescript/skills/nodejs-backend-patterns/SKILL.md",
+      "skillFolderHash": "079c9e24dc821881da383213c07fdbb51f04728c",
+      "installedAt": "2026-04-01T11:47:41.120Z",
+      "updatedAt": "2026-04-01T11:47:41.120Z"
+    },
+    "api-design-principles": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/wshobson/agents.git",
+      "skillPath": "plugins/backend-development/skills/api-design-principles/SKILL.md",
+      "skillFolderHash": "4a9f363dc7a13301fe5c6aaa2d4f185a8e230113",
+      "installedAt": "2026-04-01T11:47:45.926Z",
+      "updatedAt": "2026-04-01T11:47:45.926Z"
+    },
+    "postgresql-optimization": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/github/awesome-copilot.git",
+      "skillPath": "skills/postgresql-optimization/SKILL.md",
+      "skillFolderHash": "c9fb08005c2dc38d46b1369d9cb4bc24075ece50",
+      "installedAt": "2026-04-01T11:48:03.218Z",
+      "updatedAt": "2026-04-27T21:47:01.072Z"
+    },
+    "multi-stage-dockerfile": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/github/awesome-copilot.git",
+      "skillPath": "skills/multi-stage-dockerfile/SKILL.md",
+      "skillFolderHash": "c48773c7887197168099307c60b5dab2a553259c",
+      "installedAt": "2026-04-01T11:48:20.508Z",
+      "updatedAt": "2026-04-27T21:47:50.689Z"
+    },
+    "webapp-testing": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/webapp-testing/SKILL.md",
+      "skillFolderHash": "5ffb7dc66b9fd4c25c3e400a4c00da99a349b714",
+      "pluginName": "example-skills",
+      "installedAt": "2026-04-01T11:48:26.637Z",
+      "updatedAt": "2026-04-27T21:47:38.439Z"
+    },
+    "fastapi-templates": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/wshobson/agents.git",
+      "skillPath": "plugins/api-scaffolding/skills/fastapi-templates/SKILL.md",
+      "skillFolderHash": "9464ad7adaf1efef1b6bf13c976c4f3fd883679b",
+      "installedAt": "2026-04-27T21:46:45.274Z",
+      "updatedAt": "2026-04-27T21:46:45.274Z"
+    },
+    "python-testing-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/wshobson/agents.git",
+      "skillPath": "plugins/python-development/skills/python-testing-patterns/SKILL.md",
+      "skillFolderHash": "28ce19935b2b48708af69e47e7686936a249c08b",
+      "installedAt": "2026-04-27T21:47:10.292Z",
+      "updatedAt": "2026-04-27T21:47:10.292Z"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/agent-skills.git",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "skillFolderHash": "343db72180d05814949fef7d46be96b5c6ee86b3",
+      "installedAt": "2026-04-27T21:47:16.731Z",
+      "updatedAt": "2026-04-27T21:47:16.731Z"
+    },
+    "tailwind-design-system": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/wshobson/agents.git",
+      "skillPath": "plugins/frontend-mobile-development/skills/tailwind-design-system/SKILL.md",
+      "skillFolderHash": "a8532caa4b6284a92c686bc9346c274e6e66aaa5",
+      "installedAt": "2026-04-27T21:47:23.695Z",
+      "updatedAt": "2026-04-27T21:47:23.695Z"
+    },
+    "typescript-advanced-types": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/wshobson/agents.git",
+      "skillPath": "plugins/javascript-typescript/skills/typescript-advanced-types/SKILL.md",
+      "skillFolderHash": "a2fe3beb2f08b66b467981df7e09a2ccc5c9c7d2",
+      "installedAt": "2026-04-27T21:47:30.435Z",
+      "updatedAt": "2026-04-27T21:47:30.435Z"
+    },
+    "e2e-testing-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/wshobson/agents.git",
+      "skillPath": "plugins/developer-essentials/skills/e2e-testing-patterns/SKILL.md",
+      "skillFolderHash": "364920ae1754341eeec99c913383ec437ea264ea",
+      "installedAt": "2026-04-27T21:48:00.234Z",
+      "updatedAt": "2026-04-27T21:48:00.234Z"
+    },
+    "postgresql-code-review": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/github/awesome-copilot.git",
+      "skillPath": "skills/postgresql-code-review/SKILL.md",
+      "skillFolderHash": "5e41d23340dfe6988fc87a727083d1cd30bc1b1c",
+      "installedAt": "2026-04-27T21:48:26.437Z",
+      "updatedAt": "2026-04-27T21:48:26.437Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "antigravity",
+    "cline",
+    "codex",
+    "cursor",
+    "deepagents",
+    "firebender",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-cli",
+    "opencode",
+    "warp"
+  ]
+}

@@ -1,0 +1,51 @@
+schema: spec-driven
+
+# == FOOD STORE PROJECT CONTEXT ==
+# Este contexto se inyecta en cada artifact que se crea
+context: |
+  # === TECNOLOGÍAS ===
+  # Backend: Python + FastAPI + SQLModel + PostgreSQL + Alembic
+  # Frontend: React + TypeScript + Vite + TanStack Query + TanStack Form + Zustand + Tailwind
+  # Pagos: MercadoPago Checkout API (SDK Python + JS)
+  
+  # === CONVENCIONES ===
+  # Commits: conventional commits (feat/, fix/, chore/, docs/)
+  # Nomenclatura backend: snake_case (model.py, service.py, router.py)
+  # Nomenclatura frontend: camelCase/PascalCase
+  # Arquitectura: Feature-First (backend) + FSD (frontend)
+  # testing: pytest (backend), Vitest + Playwright (frontend)
+  
+  # === DOMINIO ===
+  # E-commerce de alimentos con:
+  # - Autenticación JWT (access 30min + refresh 7 días) con rotación
+  # - RBAC: ADMIN, STOCK, PEDIDOS, CLIENT
+  # - Catálogo con categorías jerárquicas (CTE recursivo)
+  # - Ingredientes con flag es_alérgeno
+  # - Carrito client-side (Zustand + localStorage)
+  # - Pedidos con FSM (6 estados) + audit trail append-only
+  # - Pagos MercadoPago con webhook IPN
+  # - Unit of Work para transacciones atómicas
+  
+  # === REGLAS DE NEGOCIO CLAVE ===
+  # - Soft delete en todas las entidades (eliminado_en)
+  # - Snapshots en Pedido/DetallePedido (precio, dirección inmutables)
+  # - Rate limiting: 5 intentos login/15min por IP
+  # - PENDIENTE→CONFIRMADO solo automático (webhook)
+  # - HistorialEstadoPedido: append-only (solo INSERT)
+
+# === PER-ARTIFACT RULES ===
+rules:
+  proposal:
+    - Incluir siempre "Historias de Usuario" que implementa
+    - Especificar "Dependencias" de otros changes
+    - Agregar "Definition of Done" medible
+  
+  design:
+    - Incluir diagrama de arquitectura si es nuevo módulo
+    - Documentar decisiones de diseño (ADRs)
+    - Especificar contratos de API
+  
+  tasks:
+    - Break tasks en chunks de max 2 horas
+    - Incluir criterios de aceptación medibles
+    - Identificar dependencies entre tasks

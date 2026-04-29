@@ -132,6 +132,19 @@ class ProductoIngrediente(SQLModel, table=True):
     es_removible: bool = Field(default=True)
 
 
+class DetallePedidoIngredienteRemovido(SQLModel, table=True):
+    """Ingredientes removidos en un detalle de pedido (personalización)."""
+    __tablename__ = "detalles_pedido_ingredientes_removidos"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    detalle_pedido_id: int = Field(foreign_key="detalles_pedido.id")
+    ingrediente_id: int = Field(foreign_key="ingredientes.id")
+    
+    # Relationships
+    detalle_pedido: "DetallePedido" = Relationship(back_populates="ingredientes_removidos")
+    ingrediente: "Ingrediente" = Relationship()
+
+
 class FormaPago(SQLModel, table=True):
     __tablename__ = "formas_pago"
 
@@ -179,7 +192,8 @@ class DetallePedido(SQLModel, table=True):
     precio_snapshot: float = Field(ge=0)
     nombre_snapshot: str = Field(max_length=200)
     subtotal: float = Field(ge=0)
-    personalizacion: Optional[List[int]] = Field(default=None)
+    # Personalización: ingredientes removidos se maneja en tabla separada
+    ingredientes_removidos: List["DetallePedidoIngredienteRemovido"] = Relationship(back_populates="detalle_pedido")
 
 
 class HistorialEstadoPedido(SQLModel, table=True):

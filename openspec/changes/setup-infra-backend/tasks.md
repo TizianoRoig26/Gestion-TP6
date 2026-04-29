@@ -30,17 +30,17 @@
 ## 5. Schemas Pydantic
 
 - [x] 5.1 Crear schemas de autenticación:
-- [ ] 5.2 Crear schemas de usuarios
-- [ ] 5.3 Crear schemas de pedidos
-- [ ] 5.4 Verificar que validan correctamente
+- [x] 5.2 Crear schemas de usuarios
+- [x] 5.3 Crear schemas de pedidos
+- [x] 5.4 Verificar que validan correctamente
 
 ## 6. Alembic y Migraciones
 
-- [ ] 6.1 Inicializar Alembic (alembic init)
-- [ ] 6.2 Configurar env.py con DATABASE_URL
-- [ ] 6.3 Generar migraciones desde modelos
-- [ ] 6.4 Correr migration: alembic upgrade head
-- [ ] 6.5 Verificar tablas creadas en PostgreSQL
+- [x] 6.1 Inicializar Alembic (alembic init)
+- [x] 6.2 Configurar env.py con DATABASE_URL
+- [x] 6.3 Generar migraciones desde modelos
+- [x] 6.4 Correr migration: alembic upgrade head
+- [x] 6.5 Verificar tablas creadas en PostgreSQL
 
 ## 7. Seed Data
 

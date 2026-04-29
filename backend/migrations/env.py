@@ -2,12 +2,37 @@
 Alembic Environment Configuration
 """
 from logging.config import fileConfig
+import sys
+from pathlib import Path
 
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
+# Add parent directory to path for imports
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
 from core.config import settings
 from db.models import SQLModel
+
+# Import all models to register them with SQLModel metadata
+from db.models import (
+    Usuario,
+    Rol,
+    UsuarioRol,
+    RefreshToken,
+    DireccionEntrega,
+    Categoria,
+    Producto,
+    Ingrediente,
+    ProductoCategoria,
+    ProductoIngrediente,
+    FormaPago,
+    EstadoPedido,
+    Pedido,
+    DetallePedido,
+    HistorialEstadoPedido,
+    Pago,
+)
 
 # This is the Alembic Config object
 config = context.config

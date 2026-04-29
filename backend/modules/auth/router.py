@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlmodel import Session
 
 from core.database import get_session
-from core.dependencies import get_current_user
+from core.dependencies import get_current_user, require_role
 from core.exceptions import UnauthorizedException, ConflictException
 from modules.auth.schemas import (
     LoginRequest,
@@ -126,3 +126,9 @@ def get_me(user: Usuario = Depends(get_current_user)):
         credo_activo=user.credo_activo,
         creado_en=user.creado_en,
     )
+
+
+@router.get("/admin-only", status_code=200)
+def admin_only(user: Usuario = Depends(require_role("ADMIN"))):
+    """Test endpoint - Admin only."""
+    return {"message": "Admin access granted", "user": user.email}

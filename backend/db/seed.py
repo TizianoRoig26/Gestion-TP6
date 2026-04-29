@@ -20,14 +20,14 @@ def seed_roles(session: Session):
     ]
     
     for role_data in roles_data:
-        # Check if exists
-        existing = session.get(Rol, role_data["codigo"])
+        # Check if exists by codigo (not by id)
+        existing = session.exec(select(Rol).where(Rol.codigo == role_data["codigo"])).first()
         if not existing:
             role = Rol(**role_data)
             session.add(role)
     
     session.commit()
-    print("✓ Roles seeded")
+    print("[OK] Roles seeded")
 
 
 def seed_estados_pedido(session: Session):
@@ -48,7 +48,7 @@ def seed_estados_pedido(session: Session):
             session.add(estado)
     
     session.commit()
-    print("✓ Estados de pedido seeded")
+    print("[OK] Estados de pedido seeded")
 
 
 def seed_formas_pago(session: Session):
@@ -65,7 +65,7 @@ def seed_formas_pago(session: Session):
             session.add(forma)
     
     session.commit()
-    print("✓ Formas de pago seeded")
+    print("[OK] Formas de pago seeded")
 
 
 def seed_admin_user(session: Session):
@@ -96,9 +96,9 @@ def seed_admin_user(session: Session):
         session.add(usuario_rol)
         session.commit()
         
-        print(f"✓ Admin user created: {settings.admin_email}")
+        print(f"[OK] Admin user created: {settings.admin_email}")
     else:
-        print("✓ Admin user already exists")
+        print("[OK] Admin user already exists")
 
 
 def run_seed():
@@ -111,7 +111,7 @@ def run_seed():
         seed_formas_pago(session)
         seed_admin_user(session)
         
-        print("\n✅ Seed completed!")
+        print("\n[OK] Seed completed!")
 
 
 if __name__ == "__main__":

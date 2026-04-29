@@ -1,16 +1,23 @@
 """
 Auth Service - Business logic for authentication
 """
+import hashlib
 from datetime import datetime, timedelta
 from typing import Optional
 import uuid
 
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 from core.config import settings
 from core.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_token
 from core.exceptions import UnauthorizedException, ConflictException
+from modules.auth.repository import UsuarioRepository, RefreshTokenRepository
 from db.models import Usuario, RefreshToken, UsuarioRol
+
+
+def hash_token(token: str) -> str:
+    """Hash a token using SHA-256 for database storage."""
+    return hashlib.sha256(token.encode('utf-8')).hexdigest()
 
 
 class AuthService:
@@ -18,11 +25,13 @@ class AuthService:
     
     def __init__(self, session: Session):
         self.session = session
+        self.usuario_repo = UsuarioRepository(session)
+        self.token_repo = RefreshTokenRepository(session)
     
     def register(self, nombre: str, email: str, password: str, telefono: Optional[str] = None) -> tuple[Usuario, str, str]:
         """Register a new user."""
         # Check if email exists
-        existing = self.session.exec(select(Usuario).where(Usuario.email == email)).first()
+        existing = self.usuario_repo.get_by_email(email)
         if existing:
             raise ConflictException("Email already registered")
         
@@ -33,9 +42,7 @@ class AuthService:
             password_hash=hash_password(password),
             telefono=telefono
         )
-        self.session.add(usuario)
-        self.session.commit()
-        self.session.refresh(usuario)
+        usuario = self.usuario_repo.create(usuario)
         
         # Auto-assign CLIENT role
         usuario_rol = UsuarioRol(
@@ -53,7 +60,7 @@ class AuthService:
     def login(self, email: str, password: str) -> tuple[Usuario, str, str]:
         """Login user."""
         # Find user
-        usuario = self.session.exec(select(Usuario).where(Usuario.email == email)).first()
+        usuario = self.usuario_repo.get_by_email(email)
         if not usuario or not verify_password(password, usuario.password_hash):
             raise UnauthorizedException("Invalid email or password")
         
@@ -78,25 +85,29 @@ class AuthService:
             raise UnauthorizedException("Invalid token payload")
         
         # Find user
-        usuario = self.session.get(Usuario, user_id)
+        usuario = self.usuario_repo.get_by_id(int(user_id))
         if not usuario or usuario.eliminado_en:
             raise UnauthorizedException("User not found")
         
         # Check if token is valid and not revoked in DB
-        token_hash = hash(refresh_token)
-        db_token = self.session.exec(
-            select(RefreshToken).where(
-                RefreshToken.token == token_hash,
-                RefreshToken.usuario_id == user_id,
-                RefreshToken.revoked_at == None
-            )
-        ).first()
+        token_hash = hash_token(refresh_token)
+        print(f"[DEBUG] Refresh token received: {refresh_token[:50]}...")
+        print(f"[DEBUG] Hash calculated: {token_hash[:50]}...")
         
-        if not db_token:
+        db_token = self.token_repo.get_by_token_hash(token_hash)
+        print(f"[DEBUG] DB token found: {db_token is not None}")
+        
+        if db_token:
+            print(f"[DEBUG] DB token usuario_id: {db_token.usuario_id}")
+            print(f"[DEBUG] Payload user_id: {usuario.id}")
+            print(f"[DEBUG] Revoked at: {db_token.revoked_at}")
+        
+        if not db_token or db_token.revoked_at or db_token.usuario_id != usuario.id:
             raise UnauthorizedException("Refresh token revoked or invalid")
         
         # Revoke old token (rotation)
-        db_token.revoked_at = datetime.utcnow()
+        self.token_repo.revoke(db_token)
+        self.session.commit()  # ¡IMPORTANTE: Guardar revocación!
         
         # Create new tokens
         tokens = self._create_tokens(usuario)
@@ -114,52 +125,40 @@ class AuthService:
             return
         
         # Find and revoke token
-        token_hash = hash(refresh_token)
-        db_token = self.session.exec(
-            select(RefreshToken).where(
-                RefreshToken.token == token_hash,
-                RefreshToken.usuario_id == user_id
-            )
-        ).first()
+        token_hash = hash_token(refresh_token)
+        db_token = self.token_repo.get_by_token_hash(token_hash)
         
-        if db_token:
-            db_token.revoked_at = datetime.utcnow()
-            self.session.commit()
+        if db_token and db_token.usuario_id == int(user_id):
+            self.token_repo.revoke(db_token)
     
     def _create_tokens(self, usuario: Usuario) -> dict[str, str]:
         """Create access and refresh tokens."""
         # Get user roles
-        roles = self.session.exec(
-            select(UsuarioRol.rol_codigo).where(UsuarioRol.usuario_id == usuario.id)
-        ).all()
+        roles = self.usuario_repo.get_roles(usuario.id)
         
         # Access token
         access_token = create_access_token(
             {"sub": str(usuario.id), "email": usuario.email, "roles": roles}
         )
         
-        # Refresh token
-        refresh_token_value = str(uuid.uuid4())
+        # Refresh token (JWT)
         refresh_token = create_refresh_token({"sub": str(usuario.id)})
         
-        # Store refresh token in DB
-        token_hash = hash(refresh_token_value)
+        # Store refresh token hash in DB
+        token_hash = hash_token(refresh_token)
         db_refresh = RefreshToken(
             token=token_hash,
             usuario_id=usuario.id,
             expires_at=datetime.utcnow() + timedelta(days=settings.refresh_token_expire_days)
         )
-        self.session.add(db_refresh)
-        self.session.commit()
+        self.token_repo.create(db_refresh)
+        self.session.commit()  # ¡IMPORTANTE: commit para guardar en DB!
         
         return {
             "access_token": access_token,
-            "refresh_token": refresh_token_value,
+            "refresh_token": refresh_token,
         }
     
     def get_user_roles(self, user_id: int) -> list[str]:
         """Get user's roles."""
-        roles = self.session.exec(
-            select(UsuarioRol.rol_codigo).where(UsuarioRol.usuario_id == user_id)
-        ).all()
-        return roles
+        return self.usuario_repo.get_roles(user_id)

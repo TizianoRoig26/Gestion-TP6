@@ -45,35 +45,35 @@
 ## 7. Seed Data
 
 - [x] 7.1 Crear db/seed.py
-- [ ] 7.2 Insertar 4 Roles (ADMIN, STOCK, PEDIDOS, CLIENT)
-- [ ] 7.3 Insertar 6 EstadosPedido
-- [ ] 7.4 Insertar FormasPago
-- [ ] 7.5 Crear usuario admin por defecto
-- [ ] 7.6 Ejecutar seed y verificar datos
+- [x] 7.2 Insertar 4 Roles (ADMIN, STOCK, PEDIDOS, CLIENT)
+- [x] 7.3 Insertar 6 EstadosPedido
+- [x] 7.4 Insertar FormasPago
+- [x] 7.5 Crear usuario admin por defecto
+- [x] 7.6 Ejecutar seed y verificar datos
 
 ## 8. Módulo Auth - Registro y Login
 
 - [x] 8.1 Crear auth/model.py (_extend modelos existentes si es necesario)
 - [x] 8.2 Crear auth/schemas.py ( registrar schemas )
-- [ ] 8.3 Crear auth/repository.py ( repository )
+- [x] 8.3 Crear auth/repository.py ( repository )
 - [x] 8.4 Crear auth/service.py ( lógica: bcrypt, JWT )
 - [x] 8.5 Crear auth/router.py ( endpoints: /register, /login )
-- [ ] 8.6 Probar registro de usuario
-- [ ] 8.7 Probar login y obtener tokens
+- [x] 8.6 Probar registro de usuario
+- [x] 8.7 Probar login y obtener tokens
 
 ## 9. Auth - Refresh y Logout
 
-- [ ] 9.1 Crear endpoint /auth/refresh con rotación
-- [ ] 9.2 Crear endpoint /auth/logout
-- [ ] 9.3 Probar refresh token
-- [ ] 9.4 Probar logout (refresh invalidado)
+- [x] 9.1 Crear endpoint /auth/refresh con rotación
+- [x] 9.2 Crear endpoint /auth/logout
+- [x] 9.3 Probar refresh token
+- [x] 9.4 Probar logout (refresh invalidado)
 
 ## 10. Protección de Rutas (get_current_user, require_role)
 
-- [ ] 10.1 Implementar get_current_user dependency
-- [ ] 10.2 Implementar require_role dependency factory
+- [x] 10.1 Implementar get_current_user dependency
+- [x] 10.2 Implementar require_role dependency factory
 - [ ] 10.3 Proteger rutas existentes
-- [ ] 10.4 Verificar 401 sin token
+- [x] 10.4 Verificar 401 sin token
 - [ ] 10.5 Verificar 403 con rol insuficiente
 
 ## 11. Rate Limiting

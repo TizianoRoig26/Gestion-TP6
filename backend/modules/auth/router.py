@@ -7,6 +7,7 @@ from sqlmodel import Session
 from core.database import get_session
 from core.dependencies import get_current_user, require_role
 from core.exceptions import UnauthorizedException, ConflictException
+from core.limiter import limiter
 from modules.auth.schemas import (
     LoginRequest,
     RegisterRequest,
@@ -43,40 +44,15 @@ def register(request: RegisterRequest, session: Session = Depends(get_session)):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
 
-# Rate limiting: 5 attempts per 15 minutes
-# Applied via endpoint decorator
-def rate_limit_login(request: Request):
-    """Rate limiting for login endpoint."""
-    from core.config import settings
-    from slowapi import Limiter
-    from slowapi.util import get_remote_address
-
-    if not hasattr(request.app.state, "limiter") or request.app.state.limiter is None:
-        # Rate limiting not configured
-        return
-
-    limiter: Limiter = request.app.state.limiter
-    key = get_remote_address(request)
-
-    # Check rate limit
-    if limiter._check_request_limit(request, key) is False:
-        from slowapi.errors import RateLimitExceededError
-        raise RateLimitExceededError(
-            detail=f"Rate limit exceeded. Max {settings.login_rate_limit_max} attempts per {settings.login_rate_limit_window_minutes} minutes."
-        )
-
-
 @router.post("/login", response_model=TokenResponse)
-def login(request: LoginRequest, req: Request, session: Session = Depends(get_session)):
-    """Login user."""
-    # Apply rate limiting
-    rate_limit_login(req)
-
+@limiter.limit("5/15 minutes")
+def login(request: Request, login_data: LoginRequest, session: Session = Depends(get_session)):
+    """Login user. Rate limited: 5 attempts per 15 minutes."""
     try:
         auth_service = AuthService(session)
         usuario, access_token, refresh_token = auth_service.login(
-            email=request.email,
-            password=request.password
+            email=login_data.email,
+            password=login_data.password
         )
 
         return TokenResponse(
@@ -121,10 +97,9 @@ def get_me(user: Usuario = Depends(get_current_user)):
         id=user.id,
         email=user.email,
         nombre=user.nombre,
-        apellido=user.apellido,
         telefono=user.telefono,
         credo_activo=user.credo_activo,
-        creado_en=user.creado_en,
+        creado_en=str(user.creado_en),
     )
 
 

@@ -1,7 +1,7 @@
 """
 Food Store - FastAPI Application
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
@@ -44,31 +44,22 @@ app.add_middleware(
 # ===========================================
 # Rate Limiting (slowapi)
 # ===========================================
-try:
-    from slowapi import Limiter
-    from slowapi.util import get_remote_address
-    from slowapi.errors import RateLimitExceededError
-    from slowapi.extensions import limit
+from core.limiter import limiter
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.errors import RateLimitExceeded
 
-    # Setup limiter
-    limiter = Limiter(key_func=get_remote_address)
-    app.state.limiter = limiter
+app.state.limiter = limiter
+app.add_middleware(SlowAPIMiddleware)
 
-    # rate_limit_exceeded handler
-    @app.exception_handler(RateLimitExceededError)
-    async def rate_limit_handler(request, exc):
-        from fastapi.responses import JSONResponse
-        return JSONResponse(
-            status_code=429,
-            content={
-                "detail": f"Rate limit exceeded: {exc.detail}",
-                "retry_after": exc.retry_after,
-            },
-        )
-
-except ImportError:
-    # slowapi not installed, skip rate limiting
-    limiter = None
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    from fastapi.responses import JSONResponse
+    return JSONResponse(
+        status_code=429,
+        content={
+            "detail": "Rate limit exceeded. Try again later.",
+        },
+    )
 
 
 # ===========================================

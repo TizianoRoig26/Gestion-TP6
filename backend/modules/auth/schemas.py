@@ -56,6 +56,7 @@ class UserResponse(BaseModel):
     nombre: str
     email: EmailStr
     telefono: Optional[str] = None
+    credo_activo: bool = True
     roles: list[str] = []
     creado_en: Optional[str] = None
 

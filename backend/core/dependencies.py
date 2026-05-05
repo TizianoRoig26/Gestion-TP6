@@ -133,20 +133,17 @@ def require_role(*allowed_roles: str):
         from db.models import UsuarioRol, Rol
 
         statement = (
-            select(Rol.nombre)
+            select(Rol.codigo)
             .select_from(UsuarioRol)
-            .join(Rol, UsuarioRol.rol_id == Rol.id)
+            .join(Rol, UsuarioRol.rol_codigo == Rol.codigo)
             .where(UsuarioRol.usuario_id == user.id)
-            .where(UsuarioRol.eliminado_en.is_(None))
         )
         result = session.exec(statement)
         user_roles = result.all()
 
         # Check if user has any of the allowed roles
-        user_role_names = [r.value if hasattr(r, 'value') else str(r) for r in user_roles]
-
         for allowed in allowed_roles:
-            if allowed in user_role_names:
+            if allowed in user_roles:
                 return user
 
         raise HTTPException(

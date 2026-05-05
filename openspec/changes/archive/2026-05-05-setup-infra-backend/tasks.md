@@ -72,28 +72,28 @@
 
 - [x] 10.1 Implementar get_current_user dependency
 - [x] 10.2 Implementar require_role dependency factory
-- [ ] 10.3 Proteger rutas existentes
+- [x] 10.3 Proteger rutas existentes
 - [x] 10.4 Verificar 401 sin token
-- [ ] 10.5 Verificar 403 con rol insuficiente
+- [x] 10.5 Verificar 403 con rol insuficiente
 
 ## 11. Rate Limiting
 
-- [ ] 11.1 Configurar slowapi en main.py
-- [ ] 11.2 Agregar rate limit en /auth/login (5/15min)
-- [ ] 11.3 Probar que rechaza después de 5 intentos
+- [x] 11.1 Configurar slowapi en main.py
+- [x] 11.2 Agregar rate limit en /auth/login (5/15min)
+- [x] 11.3 Probar que rechaza después de 5 intentos
 
 ## 12. Swagger y Documentación
 
-- [ ] 12.1 Verificar /docs accessible
-- [ ] 12.2 Verificar /redoc accessible
-- [ ] 12.3 Verificar que todos los endpoints aparecen
+- [x] 12.1 Verificar /docs accessible
+- [x] 12.2 Verificar /redoc accessible
+- [x] 12.3 Verificar que todos los endpoints aparecen
 
 ## 13. Verificación Final
 
-- [ ] 13.1 uvicorn main:app --reload funciona
-- [ ] 13.2 POST /auth/register retorna tokens
-- [ ] 13.3 POST /auth/login retorna tokens
-- [ ] 13.4 GET /auth/me protegido requiere token
-- [ ] 13.5 Rate limiting funciona en login
-- [ ] 13.6 Todas las tablas existen en PostgreSQL
-- [ ] 13.7 Seed data cargada correctamente
+- [x] 13.1 uvicorn main:app --reload funciona
+- [x] 13.2 POST /auth/register retorna tokens
+- [x] 13.3 POST /auth/login retorna tokens
+- [x] 13.4 GET /auth/me protegido requiere token
+- [x] 13.5 Rate limiting funciona en login
+- [x] 13.6 Todas las tablas existen en PostgreSQL
+- [x] 13.7 Seed data cargada correctamente

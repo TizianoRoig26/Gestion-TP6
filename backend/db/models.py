@@ -20,6 +20,7 @@ class Usuario(SQLModel, table=True):
     email: str = Field(max_length=254, unique=True, index=True)
     password_hash: str = Field(max_length=60)
     telefono: Optional[str] = Field(default=None, max_length=20)
+    credo_activo: bool = Field(default=True)
     creado_en: datetime = Field(default_factory=datetime.utcnow)
     actualizado_en: Optional[datetime] = Field(default=None)
     eliminado_en: Optional[datetime] = Field(default=None)

@@ -11,6 +11,7 @@ y verificar si no hay ninguna memoria relevante
 Cuando termine un change realizar un:
 engram sync
 para poder compartir la memoria usada para dicho change 
+tambien actualiza docs/changeslog.md con el change actual y actualiza el progreso recorrido al igual que en AGENT.md
 
 ## 1. Contexto del Sistema
 
@@ -21,7 +22,7 @@ Food Store es una plataforma **full-stack para comercio electrónico de alimento
 | **Metodología** | Spec-Driven Development (SDD) y Feature-First |
 | **Backend** | FastAPI, SQLModel, PostgreSQL, Alembic |
 | **Frontend** | React, TypeScript, Vite, Tailwind CSS |
-| ** Estado** | En desarrollo - setup-infra-backend (~60%) |
+| **Estado** | Backend setup-infra-backend ✅ completado (61/61 tasks) — Frontend pendiente |
 
 ---
 
@@ -51,22 +52,36 @@ El flujo de dependencias es: **Router -> Service -> Unit of Work (UoW) -> Reposi
 ```
 backend/
 ├── main.py                    # Entry point (uvicorn)
-├── app.py                    # FastAPI app (CORS, routes)
+├── app.py                     # FastAPI app (CORS, routes)
 ├── requirements.txt           # Dependencias
-├── .env.example            # Template variables
+├── .env.example               # Template variables
 ├── core/
-│   ├── config.py           # Settings
-│   ├── database.py       # Engine + Session
-│   ├── security.py      # JWT + bcrypt
-│   └── exceptions.py    # HTTP exceptions
+│   ├── config.py              # Settings (Pydantic)
+│   ├── database.py            # Engine + Session + UoW
+│   ├── security.py            # JWT + bcrypt
+│   ├── exceptions.py          # HTTP exceptions custom
+│   ├── base_repository.py     # BaseRepository[T] genérico
+│   └── uow.py                 # Unit of Work (context manager)
 ├── db/
-│   ├── models.py        # Entidades SQLModel (ERD v5)
-│   └── seed.py         # Seed data
+│   ├── models.py              # Entidades SQLModel (ERD v5)
+│   └── seed.py                # Seed data idempotente
+├── alembic/                   # Migraciones Alembic
+│   ├── env.py                 # Configuración de migraciones
+│   └── versions/              # Scripts de migración
 └── modules/
-    └── auth/
-        ├── schemas.py  # Pydantic models
-        ├── service.py  # Lógica de negocio
-        └── router.py  # Endpoints HTTP
+    ├── auth/                  # ✅ Login, register, refresh, logout
+    │   ├── schemas.py
+    │   ├── service.py
+    │   ├── router.py
+    │   └── repository.py
+    ├── usuarios/              # ✅ CRUD usuarios
+    ├── direcciones/           # ✅ Direcciones de clientes
+    ├── categorias/            # ✅ Categorías jerárquicas
+    ├── productos/             # ✅ CRUD productos + stock
+    ├── ingredientes/          # ✅ CRUD ingredientes
+    ├── pedidos/               # ✅ CRUD pedidos + FSM
+    ├── pagos/                 # ✅ MercadoPago integration
+    └── admin/                 # ✅ Panel de administración
 ```
 
 ---
@@ -133,17 +148,26 @@ refactor: extract BaseRepository
 | Fecha | Agente | Cambio Realizado | Estado |
 | :--- | :--- | :--- | :--- |
 | 2026-04-27 | Claude | Configuración inicial del proyecto Food Store | Completado |
-| 2026-04-27 | Claude | Setup infraestructura backend (main.py, app.py, core/, db/) | En progreso (~60%) |
-| 2026-04-27 | Claude | Módulo auth completo (schemas, service, router) | Completado |
-| 2026-04-27 | Claude | Entidades SQLModel (ERD v5): Usuario, Rol, Categoria, Producto, Pedido, etc. | Completado |
-| 2026-04-27 | Claude | Seed data (Roles, EstadosPedido, Admin) | Completado |
-| 2026-04-27 | Claude | Integración de 10 skills del ecosistema | Completado |
-| 2026-04-27 | Claude | AGENTS.md unificado con spec SDD v5.0 | Completado |
-| 2026-04-27 | Claude | BaseRepository[T] generic pattern | Completado |
-| 2026-04-27 | Claude | Alembic setup (ini, env, 001_initial) | Completado |
-| 2026-04-27 | Claude | Dependencies (get_current_user, require_role) | Completado |
-| 2026-04-27 | Claude | Rate limiting con slowapi en /login | Completado |
-| 2026-04-27 | Claude | Auth /me endpoint con get_current_user | Completado |
+| 2026-05-05 | Claude | **setup-infra-backend** — 61/61 tasks completadas, archivado | ✅ Completado |
+| 2026-05-06 | Claude | CHANGELOG.md creado (root) + docs/changeslog.md actualizado | Completado |
+
+### Detalle de setup-infra-backend (61 tareas)
+
+| Sección | Tareas | Estado |
+|---------|--------|--------|
+| 1. Configuración Inicial | 1.1–1.4 | ✅ |
+| 2. Módulo Core | 2.1–2.5 | ✅ |
+| 3. Unit of Work y Repository | 3.1–3.4 | ✅ |
+| 4. Modelos SQLModel (ERD v5) | 4.1–4.4 | ✅ |
+| 5. Schemas Pydantic | 5.1–5.4 | ✅ |
+| 6. Alembic y Migraciones | 6.1–6.5 | ✅ |
+| 7. Seed Data | 7.1–7.6 | ✅ |
+| 8. Auth — Registro y Login | 8.1–8.7 | ✅ |
+| 9. Auth — Refresh y Logout | 9.1–9.4 | ✅ |
+| 10. Protección de Rutas | 10.1–10.5 | ✅ |
+| 11. Rate Limiting | 11.1–11.3 | ✅ |
+| 12. Swagger y Documentación | 12.1–12.3 | ✅ |
+| 13. Verificación Final | 13.1–13.7 | ✅ |
 
 ---
 
@@ -165,15 +189,17 @@ refactor: extract BaseRepository
 ### OPSX
 
 ```bash
-# Ver estado
+# Ver cambios activos
 openspec list --json
-openspec status --change setup-infra-backend
 
-# Continuar implementación
-/opsx:apply
+# Ver estado de un change específico
+openspec status --change <nombre> --json
 
-# Archivar cambio completado
-/opsx:archive setup-infra-backend
+# Implementar tareas
+/opsx:apply <nombre-change>
+
+# Archivar change completado
+/opsx:archive <nombre-change>
 ```
 
 ### Backend Desarrollo
@@ -222,7 +248,12 @@ LOGIN_RATE_LIMIT_WINDOW_MINUTES=15
 
 | Change | Progreso | Pending |
 |--------|----------|---------|
-| setup-infra-backend | ~60% | Alembic, get_current_user, require_role, rate limiting |
+| setup-infra-backend | ✅ 100% (archivado) | — |
+| setup-frontend | 🔲 0% | Infraestructura completa |
+| catalogo-crud | 🔲 0% | Depende de setup-frontend |
+| pedidos-feature | 🔲 0% | Depende de catalogo-crud |
+| pagos-mercadopago | 🔲 0% | Depende de pedidos-feature |
+| admin-panel | 🔲 0% | Depende de setup+pedidos |
 
 ---
 
@@ -250,5 +281,5 @@ LOGIN_RATE_LIMIT_WINDOW_MINUTES=15
 
 ---
 
-_Last updated: 2026-04-27_
+_Last updated: 2026-05-06_
 _Created: AGENTS.md v1.0 - SDD v5.0 compliant_

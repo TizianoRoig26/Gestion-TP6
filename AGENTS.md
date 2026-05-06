@@ -184,49 +184,6 @@ refactor: extract BaseRepository
 
 ---
 
-## Commands
-
-### OPSX
-
-```bash
-# Ver cambios activos
-openspec list --json
-
-# Ver estado de un change específico
-openspec status --change <nombre> --json
-
-# Implementar tareas
-/opsx:apply <nombre-change>
-
-# Archivar change completado
-/opsx:archive <nombre-change>
-```
-
-### Backend Desarrollo
-
-```bash
-# Instalar dependencias
-pip install -r requirements.txt
-
-# Copiar configuración
-cp .env.example .env
-# Editar .env con DATABASE_URL y SECRET_KEY
-
-# Generar migraciones
-alembic revision --autogenerate -m "init"
-
-# Aplicar migraciones
-alembic upgrade head
-
-# Ejecutar seed
-python -m db.seed
-
-# Servidor desarrollo
-uvicorn main:app --reload --port 8000
-```
-
----
-
 ## Variables de Entorno Requeridas
 
 ```env
@@ -258,15 +215,6 @@ LOGIN_RATE_LIMIT_WINDOW_MINUTES=15
 ---
 
 ## Skills Disponibles
-
-### Core OPSX
-
-| Skill | Descripción |
-|-------|-------------|
-| `openspec-explore` | Modo exploración - thinking partner |
-| `openspec-propose` | Crear changes con proposal/design/tasks |
-| `openspec-apply-change` | Implementar tareas de un change |
-| `openspec-archive-change` | Archivar change completado |
 
 ### Ecosystem (Instaladas)
 

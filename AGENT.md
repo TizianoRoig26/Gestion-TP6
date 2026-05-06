@@ -4,6 +4,13 @@
 > Define el contexto, la arquitectura y las reglas de negocio basadas en la Especificación Técnica v5.0 (SDD).
 
 ---
+## Reglas de sincronizacion
+Antes de Realizar un change:
+engram sync -import
+y verificar si no hay ninguna memoria relevante
+Cuando termine un change realizar un:
+engram sync
+para poder compartir la memoria usada para dicho change 
 
 ## 1. Contexto del Sistema
 
@@ -149,7 +156,7 @@ refactor: extract BaseRepository
 * [ ] **No omitir nunca el patrón Unit of Work** en operaciones de escritura.
 * [ ] Verificar JWT tokens con `python-jose` (no PyJWT directo).
 * [ ] No hardcodear valores — usar `core/config.py` Settings.
-* [ ]rate limiting en `/login` endpoint con slowapi.
+* [ ] rate limiting en `/login` endpoint con slowapi.
 
 ---
 

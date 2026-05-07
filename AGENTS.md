@@ -1,28 +1,40 @@
-# AGENTS.MD - FOOD STORE SYSTEM
+# AGENTS.md — Food Store System (SDD v5.0)
 
-> Este archivo es la **Fuente de Verdad Operativa** para Agentes de IA.
-> Define el contexto, la arquitectura y las reglas de negocio basadas en la Especificación Técnica v5.0 (SDD).
+> **Fuente de Verdad Operativa** para Agentes de IA.
+> 
+> Define contexto, arquitectura, reglas de negocio y workflow de memoria.
+> Leer **antes** de cada change. Sincronizar **después** con `engram sync`.
 
 ---
-## Reglas de sincronizacion
-Antes de Realizar un change:
+
+## Workflow de Sincronización (Obligatorio)
+
+**ANTES de iniciar un change:**
+```powershell
 engram sync -import
-y verificar si no hay ninguna memoria relevante
-Cuando termine un change realizar un:
+```
+- Importa memoria de sesiones previas
+- Verifica contexto relevante en `/memories/`
+- Consulta historial en `docs/changeslog.md`
+
+**AL FINALIZAR un change:**
+```powershell
 engram sync
-para poder compartir la memoria usada para dicho change 
-tambien actualiza docs/changeslog.md con el change actual y actualiza el progreso recorrido al igual que en AGENT.md
+```
+- Exporta aprendizajes y decisiones a memoria
+- Actualiza `docs/changeslog.md` con descripción y estado
+- Sincroniza progreso en `AGENTS.md` (tabla "Roadmap de Desarrollo")
 
 ## 1. Contexto del Sistema
 
-Food Store es una plataforma **full-stack para comercio electrónico de alimentos**.
+Food Store es una plataforma **full-stack de e-commerce de alimentos**.
 
-| Campo | Valor |
-|-------|-------|
-| **Metodología** | Spec-Driven Development (SDD) y Feature-First |
-| **Backend** | FastAPI, SQLModel, PostgreSQL, Alembic |
-| **Frontend** | React, TypeScript, Vite, Tailwind CSS |
-| **Estado** | Backend setup-infra-backend ✅ completado (61/61 tasks) — Frontend pendiente |
+| Aspecto | Descripción |
+|--------|-------------|
+| **Metodología** | Spec-Driven Development (SDD) + Feature-First + Memory-Driven |
+| **Backend** | FastAPI 0.111+, SQLModel 0.0.19+, PostgreSQL 14+, Alembic 1.13+ |
+| **Frontend** | React 18+, TypeScript 5+, Vite, Tailwind CSS 4 |
+| **Estado General** | ✅ Backend (61/61 tasks) — 🔲 Frontend (0/X tasks) |
 
 ---
 
@@ -32,13 +44,13 @@ Food Store es una plataforma **full-stack para comercio electrónico de alimento
 
 El flujo de dependencias es: **Router -> Service -> Unit of Work (UoW) -> Repository -> Model**.
 
-| Capa | Responsabilidad |
-|------|----------------|
-| **Router** | Validación de Schemas Pydantic y delegación. No contiene lógica. |
-| **Service** | Lógica de negocio stateless. Orquesta via UoW. Lanza HTTPException. |
-| **Unit of Work (UoW)** | Gestiona la transacción atómica. Es el único que hace commit/rollback. |
-| **Repository** | Consultas a base de datos heredando de BaseRepository[T]. |
-| **Model** | Definición de tablas SQLModel. |
+| Capa | Responsabilidad | Ejemplo |
+|------|-----------------|---------|
+| **Router** | Validación de request (Pydantic), delegación a Service | `@app.post("/users")` valida entrada |
+| **Service** | Lógica de negocio (stateless), orquesta vía UoW, lanza HTTPException | `UserService.create_user()` |
+| **Unit of Work** | Transacción atómica, commit/rollback (único responsable) | `async with uow: uow.users.add(...)` |
+| **Repository** | Queries DB heredando `BaseRepository[T]`, sin lógica business | `UserRepository.find_by_email()` |
+| **Model** | Tablas SQLModel + soft delete fields | `class Usuario(SQLModel, table=True)` |
 
 ### Frontend (Feature-Sliced Design - FSD)
 
@@ -88,44 +100,65 @@ backend/
 
 ## 3. Reglas de Negocio Críticas (Hard Constraints)
 
-### Dominio de Pedidos y FSM (Máquina de Estados)
+### Dominio de Pedidos (Máquina de Estados)
 
-* **Estados**: PENDIENTE, CONFIRMADO, EN_PREPARACION, EN_CAMINO, ENTREGADO, CANCELADO.
-* **RN-01**: No se permiten saltos de estado ni retrocesos.
-* **RN-02**: La transición PENDIENTE a CONFIRMADO es automática vía Webhook de MercadoPago.
-* **RN-03**: Al pasar a CONFIRMADO, se decrementa stock de forma atómica.
-* **RN-05**: El motivo es obligatorio si el estado es CANCELADO.
-* **Snapshot Pattern**: Se debe copiar el precio y dirección al crear el pedido para garantizar inmutabilidad histórica.
+**Estados válidos:**
+```
+PENDIENTE → CONFIRMADO → EN_PREPARACION → EN_CAMINO → ENTREGADO
+    ↓ (cualquier momento)
+  CANCELADO
+```
 
-### Seguridad y Auth
+| Regla | Descripción |
+|-------|-------------|
+| **RN-01** | Prohibidos saltos de estado y retrocesos (transiciones lineales) |
+| **RN-02** | PENDIENTE → CONFIRMADO es automático vía Webhook MercadoPago |
+| **RN-03** | Transición a CONFIRMADO: decrementar stock de forma atómica |
+| **RN-04** | Campo `motivo_cancelacion` es obligatorio si estado = CANCELADO |
+| **RN-05** | Snapshot: copiar precio + dirección al crear pedido (inmutabilidad histórica) |
 
-* **Doble Token**: Access JWT (30 min) y Refresh Token (7 días) con rotación obligatoria.
-* **RBAC**: Roles ADMIN, STOCK, PEDIDOS, CLIENT.
-* **Rate Limiting**: Máximo 5 intentos fallidos de login por IP en 15 minutos.
-* **PCI DSS**: Los datos de tarjetas nunca tocan el servidor (tokenización en frontend).
+### Seguridad y Autenticación
+
+| Aspecto | Requisito |
+|--------|----------|
+| **Tokens** | Access JWT (30 min) + Refresh Token (7 días) con rotación |
+| **RBAC** | Roles: ADMIN, STOCK, PEDIDOS, CLIENT |
+| **Brute Force** | Máx 5 intentos fallidos/IP en 15 min (implementar rate limiting) |
+| **PCI DSS** | Datos de tarjeta NUNCA en servidor — tokenizar en frontend |
 
 ### Base de Datos
 
-* **Soft Delete**: Todas las tablas deben incluir `creado_en`, `actualizado_en` y `eliminado_en` (nullable).
-* **Timestamps**: Todos los registros tienen `creado_en` y `actualizado_en`.
+| Patrón | Detalles |
+|--------|---------|
+| **Soft Delete** | Todas las tablas: `creado_en`, `actualizado_en`, `eliminado_en` (NULL por defecto) |
+| **Timestamps** | Todo registro: `creado_en` (no nullable) y `actualizado_en` (auto-update) |
+| **Índices** | Indexar claves foráneas y campos de búsqueda frecuente |
+| **Constraints** | Usar ON DELETE CASCADE solo cuando sea apropiado |
 
 ---
 
-## 4. Estándares de Código para el Agente
+## 4. Estándares de Código
 
-| Lenguaje | Convención |
-|----------|------------|
-| **Backend (Python)** | snake_case: `my_function`, `user_id`. Clases: PascalCase: `UserService`, `AuthRouter` |
-| **Frontend (TypeScript)** | camelCase: `userName`, `getUser`. Componentes: PascalCase: `UserCard` |
+### Naming Conventions
 
-### Commits (Convencional)
+| Contexto | Patrón | Ejemplo |
+|----------|--------|---------|
+| **Backend functions** | snake_case | `create_user()`, `get_order_by_id()` |
+| **Backend classes** | PascalCase | `UserService`, `AuthRouter`, `OrderRepository` |
+| **Backend constants** | UPPER_SNAKE_CASE | `MAX_LOGIN_ATTEMPTS`, `TOKEN_EXPIRY_MINUTES` |
+| **Frontend functions** | camelCase | `getUserData()`, `handleSubmit()` |
+| **Frontend components** | PascalCase | `UserCard`, `OrderList`, `AuthProvider` |
+| **Frontend constants** | UPPER_SNAKE_CASE | `API_BASE_URL`, `PAGE_SIZE` |
+
+### Conventional Commits
 
 ```
-feat: add user registration
-fix: resolve login issue
-docs: update API documentation
-chore: setup alembic
-refactor: extract BaseRepository
+feat: add user registration endpoint
+fix: resolve JWT token expiry validation
+refactor: extract BaseRepository pattern
+docs: update API authentication flow
+test: add unit tests for OrderService
+chore: update dependencies
 ```
 
 ### Dependencias del Proyecto
@@ -143,15 +176,16 @@ refactor: extract BaseRepository
 
 ---
 
-## 5. Changelog (Registro de Cambios)
+## 5. Changelog
 
-| Fecha | Agente | Cambio Realizado | Estado |
+| Fecha | Agente | Cambio | Estado |
 | :--- | :--- | :--- | :--- |
-| 2026-04-27 | Claude | Configuración inicial del proyecto Food Store | Completado |
-| 2026-05-05 | Claude | **setup-infra-backend** — 61/61 tasks completadas, archivado | ✅ Completado |
-| 2026-05-06 | Claude | CHANGELOG.md creado (root) + docs/changeslog.md actualizado | Completado |
+| 2026-04-27 | Claude | Configuración inicial del proyecto | ✅ |
+| 2026-05-05 | Claude | **setup-infra-backend** — 61/61 tasks + archivado | ✅ |
+| 2026-05-06 | Claude | CHANGELOG.md + docs/changeslog.md | ✅ |
+| 2026-05-07 | Claude | Mejora AGENTS.md: claridad + reglas sincronización | ✅ |
 
-### Detalle de setup-infra-backend (61 tareas)
+### Detalles: setup-infra-backend (61 tareas)
 
 | Sección | Tareas | Estado |
 |---------|--------|--------|
@@ -171,16 +205,18 @@ refactor: extract BaseRepository
 
 ---
 
-## 6. Instrucciones de Memoria Próxima
+## 6. Reglas Obligatorias (Non-Negotiable)
 
-> ⚠️ **REGLAS OBLIGATORIAS** — No omitir nunca:
+⚠️ **ANTES de escribir código:**
 
-* [ ] Siempre verificar `docs/Historias_de_usuario.md` antes de proponer cambios en los services.
-* [ ] Al modificar un modelo, generar la migración de Alembic correspondiente.
-* [ ] **No omitir nunca el patrón Unit of Work** en operaciones de escritura.
-* [ ] Verificar JWT tokens con `python-jose` (no PyJWT directo).
-* [ ] No hardcodear valores — usar `core/config.py` Settings.
-* [ ] rate limiting en `/login` endpoint con slowapi.
+| Regla | Aplicación |
+|-------|------------|
+| **RG-01** | Siempre revisar `docs/Historias_de_usuario.md` antes de modificar services |
+| **RG-02** | Todo cambio en models → generar migración Alembic inmediatamente |
+| **RG-03** | Operaciones de escritura **DEBEN** usar patrón Unit of Work |
+| **RG-04** | JWT: usar `python-jose` (NUNCA PyJWT directo) |
+| **RG-05** | Configuración: usar `core/config.py` Settings (NUNCA hardcodear) |
+| **RG-06** | Rate limiting obligatorio en `/login` endpoint con `slowapi` |
 
 ---
 
@@ -201,33 +237,40 @@ LOGIN_RATE_LIMIT_WINDOW_MINUTES=15
 
 ---
 
-## Activos en Desarrollo
+## Roadmap de Desarrollo
 
-| Change | Progreso | Pending |
-|--------|----------|---------|
-| setup-infra-backend | ✅ 100% (archivado) | — |
-| setup-frontend | 🔲 0% | Infraestructura completa |
-| catalogo-crud | 🔲 0% | Depende de setup-frontend |
-| pedidos-feature | 🔲 0% | Depende de catalogo-crud |
-| pagos-mercadopago | 🔲 0% | Depende de pedidos-feature |
-| admin-panel | 🔲 0% | Depende de setup+pedidos |
-
----
-
-## Skills Disponibles
-
-### Ecosystem (Instaladas)
-
-| Skill | Installs | Uso |
-|-------|----------|-----|
-| `fastapi-templates` | 15.2K | Backend FastAPI patterns |
-| `postgresql-optimization` | 10.9K | PostgreSQL queries |
-| `python-testing-patterns` | 17.5K | Pytest patterns |
-| `vercel-react-best-practices` | 353.8K | React patterns |
-| `webapp-testing` | 56.6K | Playwright E2E |
-| `multi-stage-dockerfile` | 11.8K | Docker configs |
+| # | Change | Estado | Dependencia | Descripción |
+|---|--------|--------|-------------|-------------|
+| 1 | setup-infra-backend | ✅ 100% | — | 61/61 tasks completadas (archivado) |
+| 2 | setup-frontend | 🔲 0% | (1) | Vite, TypeScript, Zustand, TanStack Query |
+| 3 | catalogo-crud | 🔲 0% | (2) | CRUD productos/categorías en UI |
+| 4 | pedidos-feature | 🔲 0% | (3) | Carrito, checkout, FSM visual |
+| 5 | pagos-mercadopago | 🔲 0% | (4) | Integración MercadoPago webhooks |
+| 6 | admin-panel | 🔲 0% | (4) | Dashboard admin, reportes, stock mgmt |
 
 ---
 
-_Last updated: 2026-05-06_
-_Created: AGENTS.md v1.0 - SDD v5.0 compliant_
+## Skills Disponibles (Agent Toolkit)
+
+| Skill | Propósito | Trigger |
+|-------|----------|---------|
+| `fastapi-templates` | Backend patterns | Nuevo endpoint, Service setup |
+| `postgresql-optimization` | PostgreSQL advanced | Complex queries, performance |
+| `python-testing-patterns` | Pytest + mocking | Testing backend |
+| `vercel-react-best-practices` | React optimization | Component performance |
+| `webapp-testing` | Playwright E2E | Testing frontend |
+| `sdd-apply` | Implementar changes | `openspec apply` |
+| `sdd-propose` | Proponer changes | Nuevo feature |
+
+## Cómo Usar Este Documento
+
+1. **Antes de cada change**: lee AGENTS.md + ejecuta `engram sync -import`
+2. **Durante implementación**: verifica reglas en Secciones 3 y 6
+3. **Al finalizar**: ejecuta `engram sync` + actualiza Changelog
+4. **Para duda arquitectónica**: consulta Sección 2 (Backend layers)
+
+---
+
+_Last updated: 2026-05-07_
+_Version: AGENTS.md v1.1 - SDD v5.0 compliant_
+_Sync status: Memory-driven workflow activated_

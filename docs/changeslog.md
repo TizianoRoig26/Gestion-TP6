@@ -67,15 +67,54 @@ backend/
 
 ---
 
+### ✅ setup-frontend
+**Fecha**: 2026-05-07  
+**Status**: ✅ Completado (57/57 tasks)  
+**Archivado**: 2026-05-07
+
+| Artefacto | Status |
+|-----------|--------|
+| proposal.md | ✅ |
+| design.md | ✅ |
+| specs/frontend-infra/spec.md | ✅ |
+| specs/frontend-auth/spec.md | ✅ |
+| specs/frontend-state/spec.md | ✅ |
+| tasks.md | ✅ (57/57 completadas) |
+
+**Descripción**: Infraestructura base del frontend con:
+- Vite 8 + React 19 + TypeScript 6 con strict mode + SWC
+- Tailwind CSS v4 con engine nativo
+- Arquitectura Feature-Sliced Design (6 capas: app, pages, widgets, features, entities, shared)
+- Axios centralizado con interceptors: token Bearer, refresh automático, cola de requests, error mapping
+- 4 stores Zustand: authStore (persistente con partialize), cartStore (persistente), paymentStore (transitorio), uiStore (persistencia selectiva)
+- TanStack Query con QueryClientProvider y defaults óptimos
+- Routing con react-router-dom v7 (públicas, auth, protegidas)
+- Route guards: ProtectedRoute, RoleGuard, PublicOnlyRoute
+- Login y Register forms conectados al backend
+- Toast system, ErrorBoundary global, UI primitives (Button, Input)
+
+**Estructura creada (25 archivos fuente)**:
+
+```
+frontend/src/
+├── app/          App.tsx, main.tsx, router.tsx, providers.tsx
+├── pages/        HomePage, LoginPage, RegisterPage, NotFoundPage
+├── widgets/      Header, Sidebar, Footer
+├── features/     auth/LoginForm, auth/RegisterForm
+├── entities/     user/types
+└── shared/       api/, stores/, guards/, lib/, ui/
+```
+
+---
+
 ## Cambios Pendientes
 
 | # | Change | Depende de | Status |
 |---|--------|-----------|--------|
-| 1 | setup-frontend | setup-infra-backend | 🔲 |
-| 2 | catalogo-crud | setup-infra-backend | 🔲 |
-| 3 | pedidos-feature | catalogo-crud | 🔲 |
-| 4 | pagos-mercadopago | pedidos-feature | 🔲 |
-| 5 | admin-panel | setup-infra-backend + pedidos | 🔲 |
+| 1 | catalogo-crud | setup-frontend | 🔲 |
+| 2 | pedidos-feature | catalogo-crud | 🔲 |
+| 3 | pagos-mercadopago | pedidos-feature | 🔲 |
+| 4 | admin-panel | setup-frontend + pedidos | 🔲 |
 
 ---
 
@@ -83,15 +122,15 @@ backend/
 
 | Métrica | Valor |
 |---------|-------|
-| Changes completados | 1 |
+| Changes completados | 2 |
 | Changes en progreso | 0 |
-| Changes pendientes | 5 |
-| Tareas completadas | 61 / 61 (100%) |
+| Changes pendientes | 4 |
+| Tareas completadas | 118 / 118 (100%) — backend 61 + frontend 57 |
 
 ### Stack
 
-- **Backend**: FastAPI + SQLModel + PostgreSQL + Alembic
-- **Frontend**: React + TypeScript + Vite (pendiente)
+- **Backend**: FastAPI + SQLModel + PostgreSQL + Alembic ✅
+- **Frontend**: React 19 + TypeScript 6 + Vite 8 + Zustand 5 + TanStack Query 5 + Tailwind 4 ✅
 - **Auth**: JWT (30min access + 7d refresh) + RBAC (4 roles)
 - **Pagos**: MercadoPago SDK (pendiente configuración)
 
@@ -102,6 +141,8 @@ backend/
 ```
 us-000-setup               ✅ infraestructura base (Sprint 0)
 us-001-auth                ✅ JWT · RBAC · refresh tokens
+us-000c                    ✅ frontend base (Vite + React + FSD)
+us-000e                    ✅ Zustand stores (auth, cart, payment, ui)
 us-002-categorias          🔲 catálogo jerárquico
 us-003-productos           🔲 CRUD · stock · ingredientes
 us-004-carrito             🔲 estado client-side con Zustand
@@ -139,9 +180,15 @@ openspec status --change <nombre> --json
 - ✅ Seed data cargado correctamente
 - ✅ Rate limiting activo en login
 - ✅ Todos los endpoints protegidos con JWT + RBAC
-- 🔲 Frontend aún no iniciado
-- 🔲 MercadoPago sin configurar (solo SDK instalado)
+- ✅ Frontend configurado: Vite + React 19 + TS 6 + Tailwind 4 + Zustand 5 + TanStack Query 5
+- ✅ Estructura FSD con 6 capas y 25 archivos fuente
+- ✅ Login/Register forms conectados a la API
+- ✅ Route guards implementados (auth + roles)
+- ✅ Axios con refresh automático y cola de requests
+- ✅ Stores Zustand con persistencia
+- 🔲 MercadoPago sin configurar completamente (solo SDK instalado)
+- 🔲 Próximo change recomendado: catalogo-crud
 
 ---
 
-_Last updated: 2026-05-06_
+_Last updated: 2026-05-07_

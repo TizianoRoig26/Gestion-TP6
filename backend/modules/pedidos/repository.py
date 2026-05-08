@@ -238,17 +238,27 @@ class PedidoRepository:
         self.session.add(historial)
         self.session.flush()
 
+    def _get_producto_with_lock(self, producto_id: int) -> Optional[Producto]:
+        """Get product row with SELECT FOR UPDATE to prevent race conditions."""
+        from sqlmodel import select
+        stmt = (
+            select(Producto)
+            .where(Producto.id == producto_id)
+            .with_for_update()
+        )
+        return self.session.exec(stmt).first()
+
     def decrementar_stock(self, producto_id: int, cantidad: int) -> None:
-        """Decrement product stock atomically."""
-        producto = self.session.get(Producto, producto_id)
+        """Decrement product stock atomically with row lock."""
+        producto = self._get_producto_with_lock(producto_id)
         if producto:
             producto.stock_cantidad -= cantidad
             self.session.add(producto)
             self.session.flush()
 
     def restaurar_stock(self, producto_id: int, cantidad: int) -> None:
-        """Restore product stock atomically."""
-        producto = self.session.get(Producto, producto_id)
+        """Restore product stock atomically with row lock."""
+        producto = self._get_producto_with_lock(producto_id)
         if producto:
             producto.stock_cantidad += cantidad
             self.session.add(producto)

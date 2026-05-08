@@ -2,6 +2,13 @@
 Database Seed - Initial data for Food Store
 """
 from datetime import datetime
+from pathlib import Path
+import sys
+
+# Allow running this file directly with: python db/seed.py
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from sqlmodel import Session, select
 

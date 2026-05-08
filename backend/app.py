@@ -76,11 +76,14 @@ from modules.auth.router import router as auth_router
 from modules.categorias.router import router as categorias_router
 from modules.ingredientes.router import router as ingredientes_router
 from modules.productos.router import router as productos_router
+from modules.pedidos.router import router as pedidos_router, admin_router as pedidos_admin_router
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(categorias_router, prefix="/api/v1/categorias", tags=["categorias"])
 app.include_router(ingredientes_router, prefix="/api/v1/ingredientes", tags=["ingredientes"])
 app.include_router(productos_router, prefix="/api/v1/productos", tags=["productos"])
+app.include_router(pedidos_router, prefix="/api/v1/pedidos", tags=["pedidos"])
+app.include_router(pedidos_admin_router, prefix="/api/v1/admin/pedidos", tags=["admin-pedidos"])
 
 
 # ===========================================

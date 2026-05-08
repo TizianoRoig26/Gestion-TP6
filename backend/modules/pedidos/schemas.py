@@ -219,6 +219,41 @@ class HistorialEstadoPedidoRead(BaseModel):
     }
 
 
+# ===================================================
+# SCHEMAS PARA CAMBIO DE ESTADO
+# ===================================================
+
+class CambioEstadoRequest(BaseModel):
+    """Schema for requesting a state change."""
+    estado_codigo: str = Field(min_length=2, max_length=20, description="Estado destino")
+    observacion: Optional[str] = Field(default=None, max_length=500, description="Motivo u observación")
+
+
+# ===================================================
+# SCHEMAS PARA PAGINACIÓN
+# ===================================================
+
+class PedidoResumen(BaseModel):
+    """Resumen de pedido para listados."""
+    id: int
+    usuario_id: int
+    estado_codigo: str
+    total: float
+    costo_envio: float
+    items_count: int
+    creado_en: datetime
+    actualizado_en: Optional[datetime] = None
+
+
+class PaginatedPedidosResponse(BaseModel):
+    """Paginated response for order lists."""
+    items: list
+    total: int
+    page: int
+    page_size: int
+    pages: int
+
+
 # Import UsuarioRead forward reference to avoid circular imports
 def set_usuario_read_schema(schema):
     """Set the UsuarioRead schema reference to avoid circular imports."""

@@ -107,14 +107,67 @@ frontend/src/
 
 ---
 
+### ✅ catalogo-crud
+**Fecha**: 2026-05-07  
+**Status**: ✅ Completado (44 archivos, backend + frontend)  
+**Archivado**: 2026-05-07
+
+| Artefacto | Status |
+|-----------|--------|
+| proposal.md | ✅ |
+| design.md | ✅ |
+| specs/catalogo-api/spec.md | ✅ |
+| specs/catalogo-ui/spec.md | ✅ |
+| tasks.md | ✅ (completadas) |
+
+**Descripción**: CRUD completo de catálogo con:
+- **Backend**: Modules de categorías (jerarquía con CTE), productos (con stock e imágenes), ingredientes
+- **Frontend**: CatalogPage con grid + filtros, ProductDetailPage con selector de cantidad, personalización de ingredientes
+- **Routing**: Lazy loading con React.lazy + Suspense
+- **TanStack Query**: Hooks para datos de servidor con invalidación automática
+
+---
+
+### ✅ pedidos-feature
+**Fecha**: 2026-05-08  
+**Status**: ✅ Completado (47 tasks, 43/47 verificadas, 4 requieren DB)  
+**Archivado**: 2026-05-08
+
+| Artefacto | Status |
+|-----------|--------|
+| proposal.md | ✅ |
+| design.md | ✅ |
+| specs/pedidos/spec.md | ✅ |
+| specs/pedidos-api/spec.md | ✅ |
+| specs/pedidos-ui/spec.md | ✅ |
+| tasks.md | ✅ (43/47 completadas, 4 verificación con DB) |
+
+**Descripción**: Feature completo de pedidos con:
+- **Backend (17 tasks)**:
+  - PedidoRepository con CRUD, stock con SELECT FOR UPDATE, historial append-only
+  - PedidoService con FSM engine de 6 estados, transiciones validadas por rol, side-effects atómicos
+  - PedidoRouter con 4 endpoints cliente (POST/GET pedidos, detalle, historial) + 4 endpoints admin (gestión + FSM)
+  - Endpoint `POST /pedidos/{id}/cancelar` para cancelación por cliente
+- **Frontend (30 tasks)**:
+  - CartPage con persistencia Zustand, modificación de cantidades, resumen de totales
+  - CheckoutPage con formulario de dirección, selección de forma de pago, manejo de errores de stock
+  - OrderConfirmationPage con resumen + botones de acción
+  - OrdersPage con listado paginado + filtro por estado
+  - OrderDetailPage con timeline visual FSM + modal de cancelación con motivo obligatorio
+  - Routing lazy-loaded + Header con badge de carrito y menú de usuario autenticado
+- **Fixes aplicados durante verificación**:
+  - SELECT FOR UPDATE en decrementar/restaurar stock (race condition crítica)
+  - Endpoint cliente de cancelación (antes llamaba al admin y daba 403)
+  - direccion_snapshot del request body ahora se usa correctamente
+
+---
+
 ## Cambios Pendientes
 
 | # | Change | Depende de | Status |
 |---|--------|-----------|--------|
-| 1 | catalogo-crud | setup-frontend | 🔲 |
-| 2 | pedidos-feature | catalogo-crud | 🔲 |
-| 3 | pagos-mercadopago | pedidos-feature | 🔲 |
-| 4 | admin-panel | setup-frontend + pedidos | 🔲 |
+| 1 | pagos-mercadopago | pedidos-feature | 🔲 |
+| 2 | admin-panel | setup-frontend + pedidos | 🔲 |
 
 ---
 
@@ -122,10 +175,13 @@ frontend/src/
 
 | Métrica | Valor |
 |---------|-------|
-| Changes completados | 2 |
+| Changes completados | 4 |
 | Changes en progreso | 0 |
-| Changes pendientes | 4 |
-| Tareas completadas | 118 / 118 (100%) — backend 61 + frontend 57 |
+| Changes pendientes | 2 |
+| Tareas completadas | 178 / 178 (100%) — backend 61 + frontend 57 + catalogo 44 + pedidos 47* |
+| Commits totales | 4 en main (2 feature + 1 fix + 1 archive) |
+
+\* 4 tasks de verificación requieren DB con datos — sin cambios de código pendientes.
 
 ### Stack
 
@@ -143,10 +199,10 @@ us-000-setup               ✅ infraestructura base (Sprint 0)
 us-001-auth                ✅ JWT · RBAC · refresh tokens
 us-000c                    ✅ frontend base (Vite + React + FSD)
 us-000e                    ✅ Zustand stores (auth, cart, payment, ui)
-us-002-categorias          🔲 catálogo jerárquico
-us-003-productos           🔲 CRUD · stock · ingredientes
-us-004-carrito             🔲 estado client-side con Zustand
-us-005-pedidos             🔲 UoW · FSM · audit trail
+us-002-categorias          ✅ catálogo jerárquico
+us-003-productos           ✅ CRUD · stock · ingredientes
+us-004-carrito             ✅ estado client-side con Zustand
+us-005-pedidos             ✅ UoW · FSM · audit trail
 us-006-pagos-mercadopago   🔲 checkout · webhooks IPN
 us-007-admin               🔲 panel · métricas
 us-008-direcciones         🔲 direcciones de entrega
@@ -186,9 +242,13 @@ openspec status --change <nombre> --json
 - ✅ Route guards implementados (auth + roles)
 - ✅ Axios con refresh automático y cola de requests
 - ✅ Stores Zustand con persistencia
+- ✅ Catálogo completo (categorías, productos, ingredientes) con UI
+- ✅ Flujo de pedidos completo: carrito → checkout → confirmación → mis pedidos → detalle
+- ✅ FSM de 6 estados con validación por rol y timeline visual
+- ✅ SELECT FOR UPDATE en todas las operaciones de stock
 - 🔲 MercadoPago sin configurar completamente (solo SDK instalado)
-- 🔲 Próximo change recomendado: catalogo-crud
+- 🔲 Próximo change recomendado: pagos-mercadopago (integración webhook)
 
 ---
 
-_Last updated: 2026-05-07_
+_Last updated: 2026-05-08_

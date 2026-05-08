@@ -34,7 +34,7 @@ Food Store es una plataforma **full-stack de e-commerce de alimentos**.
 | **Metodología** | Spec-Driven Development (SDD) + Feature-First + Memory-Driven |
 | **Backend** | FastAPI 0.111+, SQLModel 0.0.19+, PostgreSQL 14+, Alembic 1.13+ |
 | **Frontend** | React 18+, TypeScript 5+, Vite, Tailwind CSS 4 |
-| **Estado General** | ✅ Backend (61/61 tasks) — 🔲 Frontend (0/X tasks) |
+| **Estado General** | ✅ Backend (78/78 tasks) — ✅ Frontend (100/100 tasks) |
 
 ---
 
@@ -184,24 +184,25 @@ chore: update dependencies
 | 2026-05-05 | Claude | **setup-infra-backend** — 61/61 tasks + archivado | ✅ |
 | 2026-05-06 | Claude | CHANGELOG.md + docs/changeslog.md | ✅ |
 | 2026-05-07 | Claude | Mejora AGENTS.md: claridad + reglas sincronización | ✅ |
+| 2026-05-07 | Claude | **setup-frontend** — 57/57 tasks + archivado | ✅ |
+| 2026-05-07 | Claude | **catalogo-crud** — 44 archivos, backend + frontend + archivado | ✅ |
+| 2026-05-08 | Claude | **pedidos-feature** — 47 tasks, backend FSM + frontend completo + archivado | ✅ |
 
-### Detalles: setup-infra-backend (61 tareas)
+### Detalles: pedidos-feature (47 tareas)
 
 | Sección | Tareas | Estado |
 |---------|--------|--------|
-| 1. Configuración Inicial | 1.1–1.4 | ✅ |
-| 2. Módulo Core | 2.1–2.5 | ✅ |
-| 3. Unit of Work y Repository | 3.1–3.4 | ✅ |
-| 4. Modelos SQLModel (ERD v5) | 4.1–4.4 | ✅ |
-| 5. Schemas Pydantic | 5.1–5.4 | ✅ |
-| 6. Alembic y Migraciones | 6.1–6.5 | ✅ |
-| 7. Seed Data | 7.1–7.6 | ✅ |
-| 8. Auth — Registro y Login | 8.1–8.7 | ✅ |
-| 9. Auth — Refresh y Logout | 9.1–9.4 | ✅ |
-| 10. Protección de Rutas | 10.1–10.5 | ✅ |
-| 11. Rate Limiting | 11.1–11.3 | ✅ |
-| 12. Swagger y Documentación | 12.1–12.3 | ✅ |
-| 13. Verificación Final | 13.1–13.7 | ✅ |
+| 1. Backend — PedidoRepository | 1.1–1.6 | ✅ |
+| 2. Backend — PedidoService (FSM) | 2.1–2.7 | ✅ |
+| 3. Backend — PedidoRouter + Integración | 3.1–3.4 | ✅ |
+| 4. Frontend — API Hooks y Entities | 4.1–4.2 | ✅ |
+| 5. Frontend — Carrito (CartPage) | 5.1–5.4 | ✅ |
+| 6. Frontend — Checkout | 6.1–6.4 | ✅ |
+| 7. Frontend — Confirmación | 7.1–7.2 | ✅ |
+| 8. Frontend — Listado de Pedidos | 8.1–8.4 | ✅ |
+| 9. Frontend — Detalle de Pedido | 9.1–9.4 | ✅ |
+| 10. Frontend — Routing y Navegación | 10.1–10.3 | ✅ |
+| 11. Verificación Final | 11.1–11.3 (4 restantes requieren DB) | ✅ |
 
 ---
 
@@ -242,9 +243,9 @@ LOGIN_RATE_LIMIT_WINDOW_MINUTES=15
 | # | Change | Estado | Dependencia | Descripción |
 |---|--------|--------|-------------|-------------|
 | 1 | setup-infra-backend | ✅ 100% | — | 61/61 tasks completadas (archivado) |
-| 2 | setup-frontend | 🔲 0% | (1) | Vite, TypeScript, Zustand, TanStack Query |
-| 3 | catalogo-crud | 🔲 0% | (2) | CRUD productos/categorías en UI |
-| 4 | pedidos-feature | 🔲 0% | (3) | Carrito, checkout, FSM visual |
+| 2 | setup-frontend | ✅ 100% | (1) | Vite, TypeScript, Zustand, TanStack Query (archivado) |
+| 3 | catalogo-crud | ✅ 100% | (2) | CRUD productos/categorías en UI (archivado) |
+| 4 | pedidos-feature | ✅ 100% | (3) | Carrito, checkout, FSM visual (archivado) |
 | 5 | pagos-mercadopago | 🔲 0% | (4) | Integración MercadoPago webhooks |
 | 6 | admin-panel | 🔲 0% | (4) | Dashboard admin, reportes, stock mgmt |
 
@@ -271,6 +272,6 @@ LOGIN_RATE_LIMIT_WINDOW_MINUTES=15
 
 ---
 
-_Last updated: 2026-05-07_
-_Version: AGENTS.md v1.1 - SDD v5.0 compliant_
+_Last updated: 2026-05-08_
+_Version: AGENTS.md v2.0 - SDD v5.0 compliant_
 _Sync status: Memory-driven workflow activated_

@@ -42,13 +42,17 @@ Gestión del catálogo de productos con categorías jerárquicas, productos e in
 - auth.md (requiere autenticación para gestión)
 
 ## Definition of Done
-- [ ] CRUD categorías con jerarquía funcionando
-- [ ] CRUD ingredientes con flag alérgeno
-- [ ] CRUD productos con stock y precio
-- [ ] Productos en múltiples categorías
-- [ ] Ingredientes en productos
-- [ ] Catálogo público filtrado
-- [ ] Filtro por alérgenos
+- [x] CRUD categorías con jerarquía funcionando
+- [x] CRUD ingredientes con flag alérgeno
+- [x] CRUD productos con stock y precio
+- [x] Productos en múltiples categorías
+- [x] Ingredientes en productos
+- [x] Catálogo público filtrado
+- [x] Filtro por alérgenos
+
+## Sub-capabilities
+- `catalogo-api` — API REST del catálogo (CRUD productos, categorías, ingredientes)
+- `catalogo-ui` — Interfaz de usuario del catálogo (listado, detalle, filtros)
 
 ## Recursos
 - docs/Descripcion.md (sección 4 - Dominio 2)

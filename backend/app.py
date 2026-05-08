@@ -73,8 +73,14 @@ register_exception_handlers(app)
 # ===========================================
 # Import routers here after creating modules
 from modules.auth.router import router as auth_router
+from modules.categorias.router import router as categorias_router
+from modules.ingredientes.router import router as ingredientes_router
+from modules.productos.router import router as productos_router
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(categorias_router, prefix="/api/v1/categorias", tags=["categorias"])
+app.include_router(ingredientes_router, prefix="/api/v1/ingredientes", tags=["ingredientes"])
+app.include_router(productos_router, prefix="/api/v1/productos", tags=["productos"])
 
 
 # ===========================================

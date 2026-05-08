@@ -5,6 +5,8 @@ import { HomePage } from "../pages/HomePage";
 import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
+import { CatalogPage } from "../pages/CatalogPage";
+import { ProductDetailPage } from "../pages/ProductDetailPage";
 import { ProtectedRoute } from "../shared/guards/ProtectedRoute";
 import { PublicOnlyRoute } from "../shared/guards/PublicOnlyRoute";
 
@@ -26,6 +28,8 @@ export const router = createBrowserRouter([
     children: [
       // Public routes
       { path: "/", element: <HomePage /> },
+      { path: "/catalogo", element: <CatalogPage /> },
+      { path: "/catalogo/:id", element: <ProductDetailPage /> },
       { path: "*", element: <NotFoundPage /> },
 
       // Auth routes (redirect to / if already authenticated)

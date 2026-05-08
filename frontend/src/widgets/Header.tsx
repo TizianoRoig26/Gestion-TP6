@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 // Placeholder — will be connected to authStore in later tasks
 export function Header() {
-  const publicLinks = [
-    { to: "/", label: "Catálogo" },
+  const navLinks = [
+    { to: "/", label: "Inicio" },
+    { to: "/catalogo", label: "Catálogo" },
   ];
 
   return (
@@ -15,14 +16,21 @@ export function Header() {
               Food Store
             </Link>
             <nav className="hidden md:flex items-center gap-6">
-              {publicLinks.map((link) => (
-                <Link
+              {navLinks.map((link) => (
+                <NavLink
                   key={link.to}
                   to={link.to}
-                  className="text-gray-600 hover:text-blue-600 transition-colors"
+                  end={link.to === "/"}
+                  className={({ isActive }) =>
+                    `transition-colors ${
+                      isActive
+                        ? "text-blue-600 font-medium"
+                        : "text-gray-600 hover:text-blue-600"
+                    }`
+                  }
                 >
                   {link.label}
-                </Link>
+                </NavLink>
               ))}
             </nav>
           </div>

@@ -8,6 +8,14 @@
       "sessions": 1,
       "memories": 2,
       "prompts": 0
+    },
+    {
+      "id": "4baba1ba",
+      "created_by": "Luca",
+      "created_at": "2026-05-11T00:14:04Z",
+      "sessions": 1,
+      "memories": 1,
+      "prompts": 0
     }
   ]
 }

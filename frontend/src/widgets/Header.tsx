@@ -95,6 +95,22 @@ export function Header() {
                 >
                   Mis Pedidos
                 </NavLink>
+                {user?.roles.some((r) =>
+                  ["ADMIN", "STOCK", "PEDIDOS"].includes(r),
+                ) && (
+                  <NavLink
+                    to="/admin"
+                    className={({ isActive }) =>
+                      `transition-colors ${
+                        isActive
+                          ? "text-blue-600 font-medium"
+                          : "text-gray-600 hover:text-blue-600"
+                      }`
+                    }
+                  >
+                    Admin
+                  </NavLink>
+                )}
                 <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
                   <span className="text-sm text-gray-700 font-medium">
                     {user?.nombre}

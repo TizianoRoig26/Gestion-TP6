@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { usePedido, useHistorialPedido } from "../shared/api/pedidos";
+import { useEstadoPago } from "../shared/api/pagos";
 import { OrderStatusBadge } from "../features/orders/OrderStatusBadge";
 import { OrderTimeline } from "../features/orders/OrderTimeline";
 
@@ -19,6 +20,9 @@ export function OrderDetailPage() {
 
   const { data: pedido, isLoading: loadingPedido, isError: errorPedido } = usePedido(pedidoId);
   const { data: historial, isLoading: loadingHistorial } = useHistorialPedido(pedidoId);
+
+  const esMercadoPago = pedido?.forma_pago_codigo === "MERCADOPAGO";
+  const { data: pago } = useEstadoPago(esMercadoPago ? pedidoId : undefined);
 
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelMotivo, setCancelMotivo] = useState("");
@@ -102,6 +106,38 @@ export function OrderDetailPage() {
         <OrderStatusBadge estado={pedido.estado_codigo} />
       </div>
 
+      {/* Payment status badge */}
+      {esMercadoPago && pago && (
+        <div className="mb-6">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-sm text-gray-500">Pago:</span>
+            {pago.mp_status === "approved" && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                <span className="w-2 h-2 bg-green-500 rounded-full" />
+                Aprobado
+                {pago.mp_payment_id && (
+                  <span className="text-xs text-green-600 ml-1 font-mono">
+                    · ID: {pago.mp_payment_id}
+                  </span>
+                )}
+              </span>
+            )}
+            {pago.mp_status === "rejected" && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
+                <span className="w-2 h-2 bg-red-500 rounded-full" />
+                Rechazado
+              </span>
+            )}
+            {pago.mp_status === "pending" && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">
+                <span className="w-2 h-2 bg-yellow-500 rounded-full" />
+                Pendiente
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left: Order info */}
         <div className="lg:col-span-2 space-y-6">
@@ -151,6 +187,17 @@ export function OrderDetailPage() {
               <h2 className="font-semibold text-gray-900 mb-2">Dirección de entrega</h2>
               <p className="text-sm text-gray-600">{pedido.direccion_snapshot}</p>
             </div>
+          )}
+
+          {/* Retry payment — rejected + PENDIENTE */}
+          {pago?.mp_status === "rejected" && puedeCancelar && (
+            <Link
+              to="/checkout"
+              className="block w-full text-center py-3 px-6 bg-blue-600 text-white rounded-xl font-medium
+                         hover:bg-blue-700 transition-colors text-sm"
+            >
+              Reintentar pago
+            </Link>
           )}
 
           {/* Cancel button */}

@@ -1,9 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCartStore } from "../shared/stores/cartStore";
+import { usePaymentStore } from "../shared/stores/paymentStore";
 import { useCrearPedido } from "../shared/api/pedidos";
+import { useCrearPago } from "../shared/api/pagos";
+import { initMercadoPago, CardPayment } from "@mercadopago/sdk-react";
 
 const COSTO_ENVIO = 50.0;
+const MP_PUBLIC_KEY = import.meta.env.VITE_MP_PUBLIC_KEY as string | undefined;
+
+if (!MP_PUBLIC_KEY) {
+  throw new Error(
+    "VITE_MP_PUBLIC_KEY is not defined. Create a .env file based on .env.example",
+  );
+}
+
+// Initialize MercadoPago once at module level
+initMercadoPago(MP_PUBLIC_KEY);
 
 export function CheckoutPage() {
   const navigate = useNavigate();
@@ -12,13 +25,27 @@ export function CheckoutPage() {
   const totalPrice = useCartStore((s) => s.totalPrice());
 
   const crearPedido = useCrearPedido();
+  const crearPago = useCrearPago();
+  const paymentStore = usePaymentStore();
 
   const [direccion, setDireccion] = useState("");
   const [formaPago, setFormaPago] = useState("MERCADOPAGO");
   const [error, setError] = useState<string | null>(null);
+  const [pedidoCreado, setPedidoCreado] = useState<number | null>(null);
 
   const subtotal = totalPrice;
   const total = subtotal + COSTO_ENVIO;
+
+  // Reset payment store on mount
+  useEffect(() => {
+    paymentStore.resetPayment();
+  }, []);
+
+  // Redirect to cart if empty
+  if (items.length === 0 && !pedidoCreado) {
+    navigate("/carrito");
+    return null;
+  }
 
   const handleSubmit = async () => {
     if (!direccion.trim()) {
@@ -47,7 +74,15 @@ export function CheckoutPage() {
       });
 
       clearCart();
-      navigate(`/pedido-confirmado/${pedido.id}`);
+
+      if (formaPago === "MERCADOPAGO") {
+        // Show CardPayment for card tokenization
+        setPedidoCreado(pedido.id);
+        paymentStore.startCheckout(pedido.id);
+      } else {
+        // EFECTIVO — redirect straight to confirmation
+        navigate(`/pedido-confirmado/${pedido.id}`);
+      }
     } catch (err: any) {
       const detail = err?.response?.data?.detail;
       if (typeof detail === "object" && detail?.message) {
@@ -66,11 +101,95 @@ export function CheckoutPage() {
     }
   };
 
-  if (items.length === 0) {
-    navigate("/carrito");
-    return null;
+  const handleCardPayment = async (cardToken: string) => {
+    if (!pedidoCreado) return;
+
+    setError(null);
+    paymentStore.startCheckout(pedidoCreado);
+
+    try {
+      await crearPago.mutateAsync({
+        pedido_id: pedidoCreado,
+        card_token: cardToken,
+      });
+
+      // Navigate to confirmation page — polling will pick up the status
+      navigate(`/pedido-confirmado/${pedidoCreado}`);
+    } catch (err: any) {
+      const detail = err?.response?.data?.detail;
+      paymentStore.setError(
+        typeof detail === "string" ? detail : "Error al procesar el pago. Intentá de nuevo.",
+      );
+    }
+  };
+
+  const handleCardPaymentSubmit = async (param: any) => {
+    // param.token is the card_token from MercadoPago SDK
+    if (param?.token) {
+      await handleCardPayment(param.token);
+    }
+  };
+
+  // ===========================================
+  // Render: CardPayment step
+  // ===========================================
+  if (pedidoCreado && formaPago === "MERCADOPAGO") {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Completá el pago</h1>
+        <p className="text-gray-500 mb-8">
+          Pedido #{pedidoCreado} — Total: <span className="font-semibold">${total.toFixed(2)}</span>
+        </p>
+
+        {/* CardPayment Brick */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+          <CardPayment
+            initialization={{ amount: total }}
+            onSubmit={handleCardPaymentSubmit}
+            onError={(brickError) => {
+              const msg = brickError?.message ?? "Error al cargar el formulario de pago";
+              setError(msg);
+              paymentStore.setError(msg);
+            }}
+            locale="es-AR"
+          />
+        </div>
+
+        {/* Error */}
+        {(error || paymentStore.error) && (
+          <div className="p-4 bg-red-50 border border-red-100 rounded-lg text-sm text-red-700 mb-6">
+            {paymentStore.error || error}
+          </div>
+        )}
+
+        {/* Processing indicator */}
+        {crearPago.isPending && (
+          <div className="flex items-center justify-center gap-3 text-gray-600 mb-6">
+            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span className="text-sm font-medium">Procesando pago...</span>
+          </div>
+        )}
+
+        {/* Back button */}
+        <button
+          onClick={() => {
+            setPedidoCreado(null);
+            paymentStore.resetPayment();
+          }}
+          className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+        >
+          ← Volver al checkout
+        </button>
+      </div>
+    );
   }
 
+  // ===========================================
+  // Render: Checkout form
+  // ===========================================
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-8">Checkout</h1>

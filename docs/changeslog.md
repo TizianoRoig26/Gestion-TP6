@@ -160,14 +160,52 @@ frontend/src/
   - Endpoint cliente de cancelación (antes llamaba al admin y daba 403)
   - direccion_snapshot del request body ahora se usa correctamente
 
+### ✅ admin-panel
+**Fecha**: 2026-05-11  
+**Status**: ✅ Completado (32/32 tasks)  
+**Archivado**: 2026-05-11
+
+| Artefacto | Status |
+|-----------|--------|
+| proposal.md | ✅ |
+| design.md | ✅ |
+| specs/admin-api/spec.md | ✅ |
+| specs/admin-ui/spec.md | ✅ |
+| tasks.md | ✅ (32/32 completadas) |
+
+**Descripción**: Panel de administración completo con:
+- **Backend**: Módulo admin con endpoints de usuarios (listar, editar, cambiar rol, activar/desactivar) y métricas/dashboard (resumen, ventas por período, top productos, pedidos por estado)
+- **Frontend**: Layout Admin con sidebar por roles, guard `AdminRoute`, Dashboard con 4 KPIs + 3 gráficos recharts (LineChart, BarChart, PieChart), AdminUsuariosPage con tabla paginada + buscador + modal edición + modal desactivar, AdminPedidosPage con tabla expandible + selector FSM + timeline de historial, AdminStockPage con inline edit + toggle disponibilidad + alerta stock bajo
+- **Bug fix**: AuthService.login() ahora verifica `credo_activo` — usuario desactivado no puede obtener tokens
+
+---
+
+### ✅ pagos-mercadopago
+**Fecha**: 2026-05-11 → 2026-05-12  
+**Status**: ✅ Completado (21/21 tasks)  
+**Archivado**: 2026-05-12
+
+| Artefacto | Status |
+|-----------|--------|
+| proposal.md | ✅ |
+| design.md | ✅ |
+| specs/pagos-api/spec.md | ✅ (nueva capability) |
+| specs/pagos-ui/spec.md | ✅ (nueva capability) |
+| specs/pedidos-api/spec.md | ✅ (delta sincronizado) |
+| specs/pedidos-ui/spec.md | ✅ (delta sincronizado) |
+| tasks.md | ✅ (21/21 completadas) |
+
+**Descripción**: Integración de pagos con MercadoPago Checkout API:
+- **Backend (tasks 1-3)**: Módulo `pagos/` con creación de pagos (card_token), webhook IPN con verificación contra API de MP, consulta de estado, idempotency_key UNIQUE para evitar duplicados
+- **Frontend (tasks 4-5)**: CardPayment brick de @mercadopago/sdk-react en checkout con tokenización en browser, polling de estado con TanStack Query en confirmación, badge de estado de pago en detalle del pedido
+- **Pedidos (task 3.3)**: Transición PENDIENTE→CONFIRMADO ahora solo vía webhook (eliminada transición manual ADMIN)
+- **Verificación (tasks 6.1-6.4)**: Webhook transiciona pedido ✅, idempotency evita duplicados ✅, 3 estados frontend ✅, polling se detiene en terminal ✅
+
 ---
 
 ## Cambios Pendientes
 
-| # | Change | Depende de | Status |
-|---|--------|-----------|--------|
-| 1 | pagos-mercadopago | pedidos-feature | 🔲 |
-| 2 | admin-panel | setup-frontend + pedidos | 🔲 |
+_No hay cambios pendientes._
 
 ---
 
@@ -175,20 +213,20 @@ frontend/src/
 
 | Métrica | Valor |
 |---------|-------|
-| Changes completados | 4 |
+| Changes completados | 6 |
 | Changes en progreso | 0 |
-| Changes pendientes | 2 |
-| Tareas completadas | 178 / 178 (100%) — backend 61 + frontend 57 + catalogo 44 + pedidos 47* |
+| Changes pendientes | 0 |
+| Tareas completadas | 231 / 231 (100%) — backend 61 + frontend 57 + catalogo 44 + pedidos 47 + admin 32 + pagos 21* |
 | Commits totales | 4 en main (2 feature + 1 fix + 1 archive) |
 
-\* 4 tasks de verificación requieren DB con datos — sin cambios de código pendientes.
+\* Algunas tasks de verificación requieren DB con datos — sin cambios de código pendientes.
 
 ### Stack
 
 - **Backend**: FastAPI + SQLModel + PostgreSQL + Alembic ✅
 - **Frontend**: React 19 + TypeScript 6 + Vite 8 + Zustand 5 + TanStack Query 5 + Tailwind 4 ✅
 - **Auth**: JWT (30min access + 7d refresh) + RBAC (4 roles)
-- **Pagos**: MercadoPago SDK (pendiente configuración)
+- **Pagos**: MercadoPago SDK ✅ integrado (crear pago, webhook IPN, polling frontend)
 
 ---
 
@@ -203,8 +241,8 @@ us-002-categorias          ✅ catálogo jerárquico
 us-003-productos           ✅ CRUD · stock · ingredientes
 us-004-carrito             ✅ estado client-side con Zustand
 us-005-pedidos             ✅ UoW · FSM · audit trail
-us-006-pagos-mercadopago   🔲 checkout · webhooks IPN
-us-007-admin               🔲 panel · métricas
+us-006-pagos-mercadopago   ✅ checkout · webhooks IPN
+us-007-admin               ✅ panel · métricas
 us-008-direcciones         🔲 direcciones de entrega
 ```
 
@@ -246,9 +284,9 @@ openspec status --change <nombre> --json
 - ✅ Flujo de pedidos completo: carrito → checkout → confirmación → mis pedidos → detalle
 - ✅ FSM de 6 estados con validación por rol y timeline visual
 - ✅ SELECT FOR UPDATE en todas las operaciones de stock
-- 🔲 MercadoPago sin configurar completamente (solo SDK instalado)
-- 🔲 Próximo change recomendado: pagos-mercadopago (integración webhook)
+- ✅ MercadoPago integrado: backend (crear pago, webhook IPN, consulta) + frontend (CardPayment brick, polling, badge de estado)
+- 🔲 Próximo change recomendado: direcciones de entrega o submodules git
 
 ---
 
-_Last updated: 2026-05-08_
+_Last updated: 2026-05-12_

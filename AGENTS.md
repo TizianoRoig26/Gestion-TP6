@@ -1,277 +1,226 @@
-# AGENTS.md — Food Store System (SDD v5.0)
+# AGENTS.md — Food Store · Gestión de Pedidos
 
-> **Fuente de Verdad Operativa** para Agentes de IA.
-> 
-> Define contexto, arquitectura, reglas de negocio y workflow de memoria.
-> Leer **antes** de cada change. Sincronizar **después** con `engram sync`.
+## Rol
+Actúa como un Senior Tech Lead y Arquitecto de Software con enfoque en Spec-Driven Development. Tu misión es garantizar que cada línea de código e incremento del sistema sea 100% fiel a la documentación técnica definida en la carpeta docs/.
+
+## Regla de trabajo (MANDATORIA): usar subagentes
+
+Siempre que se trabaje en el repo (investigar, analizar, escribir código, refactors, generar docs, ejecutar comandos de verificación, etc.) se DEBEN usar **subagentes**.
+
+- Este agente principal actúa como **orquestador/coordinador**: define el plan, delega, revisa resultados y toma decisiones.
+- La ejecución concreta del trabajo (exploración intensiva, cambios multi-archivo, scripts, tests, builds, etc.) se delega a subagentes mediante la herramienta de tareas.
+- Únicas excepciones permitidas: preguntas de clarificación al usuario y comandos mínimos de “estado” (p.ej. `openspec status/list`, `git status/diff/log`) para entender el contexto antes de delegar.
+
+## Proyecto
+
+**Food Store** es una plataforma e-commerce full-stack para gestión de pedidos de comida.
+
+- **Backend:** FastAPI + SQLModel + PostgreSQL + Alembic · Feature-First (Router → Service → UoW → Repository → Model)
+- **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS · Feature-Sliced Design (FSD)
+- **Pagos:** MercadoPago Checkout API (tarjeta, Rapipago, Pago Fácil) + webhooks IPN
+- **Auth:** JWT + RBAC (4 roles: Cliente, Admin, Gestor de Stock, Gestor de Pedidos) + refresh token en BD
+- **Estado:** Zustand 4 (cliente) + TanStack Query 5 (servidor)
+- **Metodología:** Spec-Driven Development (SDD) · Versión de spec: 5.0
 
 ---
 
-## Workflow de Sincronización (Obligatorio)
+## Estructura del Proyecto
 
-**ANTES de iniciar un change:**
-```powershell
-engram sync -import
 ```
-- Importa memoria de sesiones previas
-- Verifica contexto relevante en `/memories/`
-- Consulta historial en `docs/changeslog.md`
+sdd-parcial1-gestion/
+├── backend/           # FastAPI – módulos por dominio
+│   ├── auth/          # Autenticación JWT
+│   ├── usuarios/      # CRUD usuarios + RBAC
+│   ├── productos/     # Catálogo
+│   ├── categorias/    # Categorías jerárquicas
+│   ├── ingredientes/  # Ingredientes + alérgenos
+│   ├── pedidos/       # FSM de 6 estados + audit trail
+│   ├── pagos/         # MercadoPago + webhooks IPN
+│   ├── direcciones/   # Direcciones de entrega
+│   ├── admin/         # Panel administrativo
+│   ├── refreshtokens/ # Gestión de refresh tokens
+│   └── core/          # UoW, BaseRepository, config compartida
+├── frontend/          # React + TypeScript – Feature-Sliced Design
+│   ├── app/           # Root, providers, router
+│   ├── pages/         # Componentes de página
+│   ├── features/      # Lógica encapsulada por feature
+│   ├── entities/      # Modelos de dominio
+│   └── shared/        # UI base, utils, hooks reutilizables
+├── docs/              # Especificación técnica SDD v5.0
+├── openspec/          # Cambios y specs OPSX
+└── .agents/skills/    # Skills de dominio instaladas
+```
 
-**AL FINALIZAR un change:**
-```powershell
+---
+
+## Arquitectura Backend — Regla de Oro
+
+El flujo de imports es **unidireccional y no puede invertirse:**
+
+```
+Router → Service → UoW → Repository → Model
+```
+
+- `router.py` — HTTP puro: parsear request, validar schema, delegar al Service
+- `service.py` — Lógica de negocio stateless, orquesta a través del UoW
+- `core/uow.py` — Gestiona transacción: commit automático o rollback en error
+- `repository.py` — Acceso a BD, sin lógica de negocio, hereda `BaseRepository[T]`
+- `model.py` — SQLModel tables + relaciones, sin imports de capas superiores
+
+---
+
+## Skills Disponibles
+
+Las siguientes skills están instaladas en `.agents/skills/`. Cargalas leyendo su `SKILL.md` **antes** de escribir código en los contextos indicados.
+
+| Contexto de activación | Skill | Archivo a leer |
+|------------------------|-------|----------------|
+| Cualquier endpoint FastAPI, service, repository, schema Pydantic, UoW, router | `fastapi-python` | `.agents/skills/fastapi-python/SKILL.md` |
+| Queries SQL, migraciones Alembic, optimización PostgreSQL, índices | `postgres` | `.agents/skills/postgres/SKILL.md` |
+| Componentes React, páginas, hooks, Tailwind, estilo visual del frontend | `frontend-design` | `.agents/skills/frontend-design/SKILL.md` |
+| Design system, tokens, componentes Tailwind reutilizables, sistema de clases | `tailwind-design-system` | `.agents/skills/tailwind-design-system/SKILL.md` |
+| Documentación técnica, README, guías, tutoriales, diátaxis | `documentation-writer` | `.agents/skills/documentation-writer/SKILL.md` |
+| Crear o mejorar una skill de agente IA | `skill-creator` | `.agents/skills/skill-creator/SKILL.md` |
+| El usuario pregunta qué skill usar o si existe una skill para X | `find-skills` | `.agents/skills/find-skills/SKILL.md` |
+| Reportar cambios realizados en un commit (summary, changelog) | `commit-changes-reporter` | `.agents/skills/commit-changes-reporter/SKILL.md` |
+
+> **Regla:** si el contexto activa una skill, leé el `SKILL.md` correspondiente **antes** de generar código. Múltiples skills pueden aplicar simultáneamente.
+
+---
+
+## Convenciones del Proyecto
+
+### Backend
+
+- Cada módulo sigue la estructura: `model.py · schemas.py · repository.py · service.py · router.py`
+- El `router.py` usa `response_model` explícito en todos los endpoints
+- El `service.py` lanza `HTTPException` — nunca el router ni el repository
+- Las migraciones van en `alembic/versions/` — nunca modificar tablas directamente
+- Rate limiting en endpoints críticos con `slowapi` (ej: login: 5 intentos / 15 min)
+- Contraseñas hasheadas con bcrypt (cost factor ≥ 12)
+- Refresh tokens almacenados en BD para soporte de invalidación
+
+### Frontend
+
+- FSD estricto: imports solo fluyen hacia abajo — `Pages → Features → Entities → Shared`
+- Estado del servidor exclusivamente con **TanStack Query** (no duplicar en Zustand)
+- Estado del cliente (carrito, sesión, UI, pagos) con **Zustand stores** tipados
+- HTTP con Axios + interceptor JWT (attach + refresh automático)
+- Formularios con **TanStack Form** (no react-hook-form)
+- Gráficos del dashboard con **recharts**
+- Tokenización de tarjetas con `@mercadopago/sdk-react` — nunca manejar datos de tarjeta en frontend raw
+
+### General
+
+- Commits: Conventional Commits (`feat:`, `fix:`, `chore:`, etc.) — sin co-authored-by ni atribución a IA
+- Variables de entorno: usar `.env.example` como referencia — nunca commitear `.env`
+- No buildear después de cambios (el equipo corre el build cuando corresponde)
+
+---
+
+## Flujo OPSX (Spec-Driven Development)
+
+Este proyecto usa **OPSX** para gestión de cambios. Los artefactos viven en `openspec/`.
+
+```
+/opsx:explore  →  /opsx:propose  →  /opsx:apply  →  /opsx:archive
+```
+
+- Los cambios activos están en `openspec/changes/<nombre>/`
+- La config del proyecto está en `openspec/config.yaml`
+- Antes de implementar cualquier feature nueva, verificar si existe un change activo con `openspec list --json`
+
+### Sync de docs/CHANGES.md al archivar
+
+Cada vez que completes el archivado de un change, **además de** ejecutar el comando de OPSX, mantené sincronizado el índice humano en `docs/CHANGES.md`:
+
+```bash
+/opsx:archive <change-name>
+```
+
+- Abrí `docs/CHANGES.md` y actualizá `Última actualización` a la fecha del día (formato `YYYY-MM-DD`).
+- Ubicá la fila del change en la tabla donde esté (Sprint/Epic) y **movela** a `## Ya realizado (archivado en OPSX)` (manteniendo la misma estructura de columnas).
+- En la fila movida, `Estado` debe quedar como `✅ Hecho (archivado YYYY-MM-DD)`.
+- En la fila movida, `Evidencia` debe apuntar a `openspec/changes/archive/YYYY-MM-DD-<change-name>/`.
+- Importante: el **source of truth** del cambio sigue siendo `openspec/` (OPSX). `docs/CHANGES.md` es solo un resumen para lectura rápida.
+
+---
+
+## Engram — Git Sync (memorias compartidas)
+
+Este proyecto usa **Engram** como sistema de memoria persistente. Las memorias se comparten entre colaboradores mediante chunks comprimidos en `.engram/chunks/`.
+
+### Protocolo post-pull (MANDATORIO)
+
+El plugin de Engram ejecuta `engram sync --import` **solo al inicio de sesión**. Si se hace `git pull` después, los chunks nuevos NO se cargan automáticamente.
+
+**Siempre que hagas `git pull`, ejecutá inmediatamente:**
+
+```bash
+engram sync --import
+```
+
+Esto importa los chunks nuevos que llegaron del remote al índice local de SQLite.
+
+### Verificar estado de sync
+
+```bash
+engram sync --status
+```
+
+Muestra cuántos chunks existen localmente vs en el repo y si hay imports pendientes.
+
+### Protocolo de cierre de sesión (AUTOMÁTICO)
+
+Cuando el usuario diga "cerrar sesión", "terminar", "done", "listo", "eso es todo" o similar, EJECUTÁ AUTOMÁTICAMENTE este flujo **ANTES** de llamar a `mem_session_summary`:
+
+```bash
+# 1. Exportar memorias nuevas como chunks
 engram sync
-```
-- Exporta aprendizajes y decisiones a memoria
-- Actualiza `docs/changeslog.md` con descripción y estado
-- Sincroniza progreso en `AGENTS.md` (tabla "Roadmap de Desarrollo")
 
-## 1. Contexto del Sistema
+# 2. Stagear TODO: código + cambios de engram + cualquier archivo pendiente
+git add -A
 
-Food Store es una plataforma **full-stack de e-commerce de alimentos**.
+# 3. Ver qué va a entrar al commit
+git status
 
-| Aspecto | Descripción |
-|--------|-------------|
-| **Metodología** | Spec-Driven Development (SDD) + Feature-First + Memory-Driven |
-| **Backend** | FastAPI 0.111+, SQLModel 0.0.19+, PostgreSQL 14+, Alembic 1.13+ |
-| **Frontend** | React 18+, TypeScript 5+, Vite, Tailwind CSS 4 |
-| **Estado General** | ✅ Backend (78/78 tasks) — ✅ Frontend (100/100 tasks) |
+# 4. Commitear todo junto (usar Conventional Commits si aplica, sino genérico)
+git commit -m "chore: end session — sync engram memories and pending changes"
 
----
-
-## 2. Definición de la Arquitectura (Source of Truth)
-
-### Backend (Capas Unidireccionales)
-
-El flujo de dependencias es: **Router -> Service -> Unit of Work (UoW) -> Repository -> Model**.
-
-| Capa | Responsabilidad | Ejemplo |
-|------|-----------------|---------|
-| **Router** | Validación de request (Pydantic), delegación a Service | `@app.post("/users")` valida entrada |
-| **Service** | Lógica de negocio (stateless), orquesta vía UoW, lanza HTTPException | `UserService.create_user()` |
-| **Unit of Work** | Transacción atómica, commit/rollback (único responsable) | `async with uow: uow.users.add(...)` |
-| **Repository** | Queries DB heredando `BaseRepository[T]`, sin lógica business | `UserRepository.find_by_email()` |
-| **Model** | Tablas SQLModel + soft delete fields | `class Usuario(SQLModel, table=True)` |
-
-### Frontend (Feature-Sliced Design - FSD)
-
-* **Capas**: App -> Pages -> Widgets -> Features -> Entities -> Shared.
-* **Gestión de Estado**:
-    * **Zustand**: Estado del cliente (Carrito, Auth, UI).
-    * **TanStack Query**: Estado del servidor (Sincronización de datos).
-
-### Estructura de Archivos
-
-```
-backend/
-├── main.py                    # Entry point (uvicorn)
-├── app.py                     # FastAPI app (CORS, routes)
-├── requirements.txt           # Dependencias
-├── .env.example               # Template variables
-├── core/
-│   ├── config.py              # Settings (Pydantic)
-│   ├── database.py            # Engine + Session + UoW
-│   ├── security.py            # JWT + bcrypt
-│   ├── exceptions.py          # HTTP exceptions custom
-│   ├── base_repository.py     # BaseRepository[T] genérico
-│   └── uow.py                 # Unit of Work (context manager)
-├── db/
-│   ├── models.py              # Entidades SQLModel (ERD v5)
-│   └── seed.py                # Seed data idempotente
-├── alembic/                   # Migraciones Alembic
-│   ├── env.py                 # Configuración de migraciones
-│   └── versions/              # Scripts de migración
-└── modules/
-    ├── auth/                  # ✅ Login, register, refresh, logout
-    │   ├── schemas.py
-    │   ├── service.py
-    │   ├── router.py
-    │   └── repository.py
-    ├── usuarios/              # ✅ CRUD usuarios
-    ├── direcciones/           # ✅ Direcciones de clientes
-    ├── categorias/            # ✅ Categorías jerárquicas
-    ├── productos/             # ✅ CRUD productos + stock
-    ├── ingredientes/          # ✅ CRUD ingredientes
-    ├── pedidos/               # ✅ CRUD pedidos + FSM
-    ├── pagos/                 # ✅ MercadoPago integration
-    └── admin/                 # ✅ Panel de administración
+# 5. Pushear al remoto para que otros colaboradores reciban los cambios
+git push
 ```
 
----
+Esto asegura que **todo** lo trabajado en la sesión (código + memorias de Engram) se commitee Y se pushee automáticamente. Así otros colaboradores reciben tanto los cambios de código como las sesiones de Engram sin pasos intermedios.
 
-## 3. Reglas de Negocio Críticas (Hard Constraints)
+**Importante:** después del push, recién ahí llamar a `mem_session_summary` para cerrar la sesión en Engram.
 
-### Dominio de Pedidos (Máquina de Estados)
+### Fallback si el push falla
 
-**Estados válidos:**
-```
-PENDIENTE → CONFIRMADO → EN_PREPARACION → EN_CAMINO → ENTREGADO
-    ↓ (cualquier momento)
-  CANCELADO
-```
-
-| Regla | Descripción |
-|-------|-------------|
-| **RN-01** | Prohibidos saltos de estado y retrocesos (transiciones lineales) |
-| **RN-02** | PENDIENTE → CONFIRMADO es automático vía Webhook MercadoPago |
-| **RN-03** | Transición a CONFIRMADO: decrementar stock de forma atómica |
-| **RN-04** | Campo `motivo_cancelacion` es obligatorio si estado = CANCELADO |
-| **RN-05** | Snapshot: copiar precio + dirección al crear pedido (inmutabilidad histórica) |
-
-### Seguridad y Autenticación
-
-| Aspecto | Requisito |
-|--------|----------|
-| **Tokens** | Access JWT (30 min) + Refresh Token (7 días) con rotación |
-| **RBAC** | Roles: ADMIN, STOCK, PEDIDOS, CLIENT |
-| **Brute Force** | Máx 5 intentos fallidos/IP en 15 min (implementar rate limiting) |
-| **PCI DSS** | Datos de tarjeta NUNCA en servidor — tokenizar en frontend |
-
-### Base de Datos
-
-| Patrón | Detalles |
-|--------|---------|
-| **Soft Delete** | Todas las tablas: `creado_en`, `actualizado_en`, `eliminado_en` (NULL por defecto) |
-| **Timestamps** | Todo registro: `creado_en` (no nullable) y `actualizado_en` (auto-update) |
-| **Índices** | Indexar claves foráneas y campos de búsqueda frecuente |
-| **Constraints** | Usar ON DELETE CASCADE solo cuando sea apropiado |
+Si `git push` falla (conflictos en remoto, sin acceso, etc.):
+1. Informar al usuario el error
+2. NO cerrar la sesión en Engram todavía
+3. Esperar indicaciones del usuario
 
 ---
 
-## 4. Estándares de Código
+## MCPs Configurados (nivel proyecto)
 
-### Naming Conventions
+| MCP | Uso |
+|-----|-----|
+| `devdocs-mcp` | Lookup de documentación técnica offline (FastAPI, React, SQLModel, Tailwind, etc.) |
 
-| Contexto | Patrón | Ejemplo |
-|----------|--------|---------|
-| **Backend functions** | snake_case | `create_user()`, `get_order_by_id()` |
-| **Backend classes** | PascalCase | `UserService`, `AuthRouter`, `OrderRepository` |
-| **Backend constants** | UPPER_SNAKE_CASE | `MAX_LOGIN_ATTEMPTS`, `TOKEN_EXPIRY_MINUTES` |
-| **Frontend functions** | camelCase | `getUserData()`, `handleSubmit()` |
-| **Frontend components** | PascalCase | `UserCard`, `OrderList`, `AuthProvider` |
-| **Frontend constants** | UPPER_SNAKE_CASE | `API_BASE_URL`, `PAGE_SIZE` |
-
-### Conventional Commits
-
-```
-feat: add user registration endpoint
-fix: resolve JWT token expiry validation
-refactor: extract BaseRepository pattern
-docs: update API authentication flow
-test: add unit tests for OrderService
-chore: update dependencies
-```
-
-### Dependencias del Proyecto
-
-| Paquete | Versión | Propósito |
-|--------|---------|----------|
-| fastapi | 0.111+ | Framework |
-| sqlmodel | 0.0.19+ | ORM |
-| alembic | 1.13+ | Migraciones |
-| slowapi | 0.1.9 | Rate limiting |
-| python-jose | 3.3.0 | JWT |
-| bcrypt | 4.1+ | Hashing |
-| mercadopago | 2.2+ | Pagos |
-| uvicorn | 0.27+ | Servidor |
+Configuración en `.opencode/opencode.json`.
 
 ---
 
-## 5. Changelog
+## Documentación de Referencia
 
-| Fecha | Agente | Cambio | Estado |
-| :--- | :--- | :--- | :--- |
-| 2026-04-27 | Claude | Configuración inicial del proyecto | ✅ |
-| 2026-05-05 | Claude | **setup-infra-backend** — 61/61 tasks + archivado | ✅ |
-| 2026-05-06 | Claude | CHANGELOG.md + docs/changeslog.md | ✅ |
-| 2026-05-07 | Claude | Mejora AGENTS.md: claridad + reglas sincronización | ✅ |
-| 2026-05-07 | Claude | **setup-frontend** — 57/57 tasks + archivado | ✅ |
-| 2026-05-07 | Claude | **catalogo-crud** — 44 archivos, backend + frontend + archivado | ✅ |
-| 2026-05-08 | Claude | **pedidos-feature** — 47 tasks, backend FSM + frontend completo + archivado | ✅ |
-
-### Detalles: pedidos-feature (47 tareas)
-
-| Sección | Tareas | Estado |
-|---------|--------|--------|
-| 1. Backend — PedidoRepository | 1.1–1.6 | ✅ |
-| 2. Backend — PedidoService (FSM) | 2.1–2.7 | ✅ |
-| 3. Backend — PedidoRouter + Integración | 3.1–3.4 | ✅ |
-| 4. Frontend — API Hooks y Entities | 4.1–4.2 | ✅ |
-| 5. Frontend — Carrito (CartPage) | 5.1–5.4 | ✅ |
-| 6. Frontend — Checkout | 6.1–6.4 | ✅ |
-| 7. Frontend — Confirmación | 7.1–7.2 | ✅ |
-| 8. Frontend — Listado de Pedidos | 8.1–8.4 | ✅ |
-| 9. Frontend — Detalle de Pedido | 9.1–9.4 | ✅ |
-| 10. Frontend — Routing y Navegación | 10.1–10.3 | ✅ |
-| 11. Verificación Final | 11.1–11.3 (4 restantes requieren DB) | ✅ |
-
----
-
-## 6. Reglas Obligatorias (Non-Negotiable)
-
-⚠️ **ANTES de escribir código:**
-
-| Regla | Aplicación |
-|-------|------------|
-| **RG-01** | Siempre revisar `docs/Historias_de_usuario.md` antes de modificar services |
-| **RG-02** | Todo cambio en models → generar migración Alembic inmediatamente |
-| **RG-03** | Operaciones de escritura **DEBEN** usar patrón Unit of Work |
-| **RG-04** | JWT: usar `python-jose` (NUNCA PyJWT directo) |
-| **RG-05** | Configuración: usar `core/config.py` Settings (NUNCA hardcodear) |
-| **RG-06** | Rate limiting obligatorio en `/login` endpoint con `slowapi` |
-
----
-
-## Variables de Entorno Requeridas
-
-```env
-DATABASE_URL=postgresql://user:pass@localhost:5432/foodstore
-SECRET_KEY=your-secret-key-min-32-characters
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-REFRESH_TOKEN_EXPIRE_DAYS=7
-CORS_ORIGINS=http://localhost:5173
-MP_ACCESS_TOKEN=TEST-xxx
-MP_PUBLIC_KEY=TEST-xxx
-LOGIN_RATE_LIMIT_MAX=5
-LOGIN_RATE_LIMIT_WINDOW_MINUTES=15
-```
-
----
-
-## Roadmap de Desarrollo
-
-| # | Change | Estado | Dependencia | Descripción |
-|---|--------|--------|-------------|-------------|
-| 1 | setup-infra-backend | ✅ 100% | — | 61/61 tasks completadas (archivado) |
-| 2 | setup-frontend | ✅ 100% | (1) | Vite, TypeScript, Zustand, TanStack Query (archivado) |
-| 3 | catalogo-crud | ✅ 100% | (2) | CRUD productos/categorías en UI (archivado) |
-| 4 | pedidos-feature | ✅ 100% | (3) | Carrito, checkout, FSM visual (archivado) |
-| 5 | pagos-mercadopago | 🔲 0% | (4) | Integración MercadoPago webhooks |
-| 6 | admin-panel | 🔲 0% | (4) | Dashboard admin, reportes, stock mgmt |
-
----
-
-## Skills Disponibles (Agent Toolkit)
-
-| Skill | Propósito | Trigger |
-|-------|----------|---------|
-| `fastapi-templates` | Backend patterns | Nuevo endpoint, Service setup |
-| `postgresql-optimization` | PostgreSQL advanced | Complex queries, performance |
-| `python-testing-patterns` | Pytest + mocking | Testing backend |
-| `vercel-react-best-practices` | React optimization | Component performance |
-| `webapp-testing` | Playwright E2E | Testing frontend |
-| `sdd-apply` | Implementar changes | `openspec apply` |
-| `sdd-propose` | Proponer changes | Nuevo feature |
-
-## Cómo Usar Este Documento
-
-1. **Antes de cada change**: lee AGENTS.md + ejecuta `engram sync -import`
-2. **Durante implementación**: verifica reglas en Secciones 3 y 6
-3. **Al finalizar**: ejecuta `engram sync` + actualiza Changelog
-4. **Para duda arquitectónica**: consulta Sección 2 (Backend layers)
-
----
-
-_Last updated: 2026-05-08_
-_Version: AGENTS.md v2.0 - SDD v5.0 compliant_
-_Sync status: Memory-driven workflow activated_
+| Documento | Contenido |
+|-----------|-----------|
+| `docs/Integrador.txt` | Especificación técnica SDD v5.0 completa — ERD v5, FSM de pedidos, API REST, schemas Pydantic, rúbrica |
+| `docs/Descripcion.txt` | Descripción integral del sistema (15 secciones) |
+| `docs/Historias_de_usuario.txt` | Historias de usuario por actor |
+| `docs/CHANGES.md` | Historial de cambios del proyecto |
+| `backend/README.md` | Setup y estructura del backend |
+| `frontend/README.md` | Setup y estructura del frontend |

@@ -41,10 +41,20 @@ El sistema SHALL guiar al cliente a través del proceso de checkout: revisión d
 - **WHEN** un usuario no autenticado intenta ir al checkout
 - **THEN** se redirige al login con un mensaje "Debés iniciar sesión para continuar"
 
-#### Scenario: Confirmar pedido
-- **WHEN** un cliente confirma el pedido en checkout
+#### Scenario: Confirmar pedido con MercadoPago
+- **WHEN** un cliente selecciona MercadoPago como forma de pago y confirma el pedido en checkout
 - **THEN** se envía POST /api/pedidos con los datos del carrito
-- **THEN** si la creación es exitosa, se vacía el carrito y se redirige a confirmación
+- **THEN** si la creación es exitosa, se vacía el carrito
+- **THEN** se muestra el formulario CardPayment de @mercadopago/sdk-react para tokenizar la tarjeta
+- **THEN** el cliente ingresa datos de tarjeta (NUNCA pasan por el servidor)
+- **THEN** se envía POST /api/v1/pagos/crear con pedido_id y card_token
+- **THEN** se redirige a la pantalla de confirmación con polling de estado
+
+#### Scenario: Confirmar pedido con efectivo
+- **WHEN** un cliente selecciona "Efectivo" como forma de pago y confirma el pedido en checkout
+- **THEN** se envía POST /api/pedidos con los datos del carrito
+- **THEN** si la creación es exitosa, se vacía el carrito
+- **THEN** se redirige a confirmación con mensaje "Pagás al recibir"
 
 #### Scenario: Error de stock en checkout
 - **WHEN** al confirmar el pedido algún producto no tiene stock suficiente
@@ -54,9 +64,18 @@ El sistema SHALL guiar al cliente a través del proceso de checkout: revisión d
 ### Requirement: Pantalla de confirmación de pedido
 El sistema SHALL mostrar una pantalla de confirmación cuando el pedido se crea exitosamente.
 
-#### Scenario: Pedido creado
-- **WHEN** un pedido se crea exitosamente
-- **THEN** se muestra pantalla de confirmación con: número de pedido, resumen de items, total, dirección, estado "PENDIENTE - Esperando pago"
+#### Scenario: Pedido con MercadoPago creado
+- **WHEN** un pedido con MercadoPago se crea exitosamente
+- **THEN** se redirige a la pantalla de confirmación con polling de estado
+- **THEN** se muestra "Procesando pago..." con un spinner mientras se espera el webhook
+- **THEN** el frontend hace polling GET /api/v1/pagos/{pedido_id} cada 5 segundos (TanStack Query refetchInterval)
+- **THEN** al recibir mp_status=approved se muestra pantalla de éxito con check verde
+- **THEN** al recibir mp_status=rejected se muestra pantalla de error con botón "Reintentar pago"
+
+#### Scenario: Pedido con efectivo creado
+- **WHEN** un pedido con efectivo se crea exitosamente
+- **THEN** se muestra pantalla de confirmación simple con: número de pedido, resumen de items, total, dirección, estado "PENDIENTE"
+- **THEN** se muestra mensaje "Pagás al recibir el pedido"
 - **THEN** se incluye botón "Ver detalle del pedido"
 - **THEN** se incluye botón "Ir al catálogo"
 

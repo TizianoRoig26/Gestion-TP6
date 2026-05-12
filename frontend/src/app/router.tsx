@@ -2,6 +2,8 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { Header } from "../widgets/Header";
 import { Footer } from "../widgets/Footer";
+import { AdminLayout } from "../widgets/AdminLayout";
+import { AdminRoute } from "../shared/guards/AdminRoute";
 import { HomePage } from "../pages/HomePage";
 import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
@@ -29,6 +31,33 @@ const OrdersPage = lazy(() =>
 const OrderDetailPage = lazy(() =>
   import("../pages/OrderDetailPage").then((m) => ({
     default: m.OrderDetailPage,
+  })),
+);
+
+// Lazy-loaded admin pages
+const DashboardPage = lazy(() =>
+  import("../pages/admin/DashboardPage").then((m) => ({
+    default: m.DashboardPage,
+  })),
+);
+const AdminUsuariosPage = lazy(() =>
+  import("../pages/admin/UsuariosPage").then((m) => ({
+    default: m.AdminUsuariosPage,
+  })),
+);
+const AdminPedidosPage = lazy(() =>
+  import("../pages/admin/PedidosPage").then((m) => ({
+    default: m.AdminPedidosPage,
+  })),
+);
+const AdminCatalogoPage = lazy(() =>
+  import("../pages/admin/CatalogoPage").then((m) => ({
+    default: m.AdminCatalogoPage,
+  })),
+);
+const AdminStockPage = lazy(() =>
+  import("../pages/admin/StockPage").then((m) => ({
+    default: m.AdminStockPage,
   })),
 );
 
@@ -85,6 +114,23 @@ export const router = createBrowserRouter([
           { path: "/pedido-confirmado/:id", element: <OrderConfirmationPage /> },
           { path: "/mis-pedidos", element: <OrdersPage /> },
           { path: "/mis-pedidos/:id", element: <OrderDetailPage /> },
+        ],
+      },
+    ],
+  },
+
+  // Admin routes (separate layout with sidebar, no public header/footer)
+  {
+    element: <AdminRoute />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { path: "/admin", element: <DashboardPage /> },
+          { path: "/admin/usuarios", element: <AdminUsuariosPage /> },
+          { path: "/admin/pedidos", element: <AdminPedidosPage /> },
+          { path: "/admin/catalogo", element: <AdminCatalogoPage /> },
+          { path: "/admin/stock", element: <AdminStockPage /> },
         ],
       },
     ],

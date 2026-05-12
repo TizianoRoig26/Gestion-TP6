@@ -68,6 +68,10 @@ class AuthService:
         if usuario.eliminado_en:
             raise UnauthorizedException("Account deleted")
         
+        # Check if active
+        if not usuario.credo_activo:
+            raise UnauthorizedException("User inactive")
+        
         # Generate tokens
         tokens = self._create_tokens(usuario)
         
@@ -88,6 +92,10 @@ class AuthService:
         usuario = self.usuario_repo.get_by_id(int(user_id))
         if not usuario or usuario.eliminado_en:
             raise UnauthorizedException("User not found")
+        
+        # Check if active
+        if not usuario.credo_activo:
+            raise UnauthorizedException("User inactive")
         
         # Check if token is valid and not revoked in DB
         token_hash = hash_token(refresh_token)

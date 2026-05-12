@@ -39,7 +39,7 @@ TRANSICIONES_PERMITIDAS = {
 # Format: (from_state, to_state) -> [allowed_role_codes]
 # CLIENT = owner of the order
 TRANSICIONES_ROLES = {
-    ("PENDIENTE", "CONFIRMADO"): ["ADMIN"],  # Temporal: solo ADMIN hasta webhook
+    ("PENDIENTE", "CONFIRMADO"): [],  # Solo vía webhook de MercadoPago (automático)
     ("PENDIENTE", "CANCELADO"): ["CLIENT", "PEDIDOS", "ADMIN"],
     ("CONFIRMADO", "EN_PREPARACION"): ["PEDIDOS", "ADMIN"],
     ("CONFIRMADO", "CANCELADO"): ["PEDIDOS", "ADMIN"],

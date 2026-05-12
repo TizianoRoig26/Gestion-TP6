@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "./axios";
 import type {
   Producto,
@@ -106,5 +106,61 @@ export function useIngredients(soloAlergenos = false) {
     queryKey: [INGREDIENTS_KEY, { soloAlergenos }],
     queryFn: () => fetchIngredients(soloAlergenos),
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+// ===========================================
+// Mutations — Stock & Availability (Admin)
+// ===========================================
+
+async function updateStock(
+  productoId: number,
+  stockCantidad: number,
+): Promise<ProductoList> {
+  const response = await api.patch(`/productos/${productoId}/stock`, {
+    stock_cantidad: stockCantidad,
+  });
+  return response.data;
+}
+
+export function useUpdateStock() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      productoId,
+      stockCantidad,
+    }: {
+      productoId: number;
+      stockCantidad: number;
+    }) => updateStock(productoId, stockCantidad),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PRODUCTS_KEY] });
+    },
+  });
+}
+
+async function toggleDisponible(
+  productoId: number,
+  disponible: boolean,
+): Promise<ProductoList> {
+  const response = await api.patch(`/productos/${productoId}`, {
+    disponible,
+  });
+  return response.data;
+}
+
+export function useToggleDisponible() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      productoId,
+      disponible,
+    }: {
+      productoId: number;
+      disponible: boolean;
+    }) => toggleDisponible(productoId, disponible),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PRODUCTS_KEY] });
+    },
   });
 }

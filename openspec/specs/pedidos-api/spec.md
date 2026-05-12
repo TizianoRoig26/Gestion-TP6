@@ -133,16 +133,16 @@ El sistema SHALL registrar cada cambio de estado en HistorialEstadoPedido de for
 - **WHEN** un usuario autorizado consulta `GET /api/pedidos/{id}/historial`
 - **THEN** el sistema retorna todos los registros ordenados cronológicamente
 
-### Requirement: Transición PENDIENTE→CONFIRMADO restringida
-El sistema SHALL permitir la transición PENDIENTE→CONFIRMADO solo para usuarios con rol ADMIN (como reemplazo temporal hasta que el webhook de MercadoPago esté implementado en change #5).
+### Requirement: Transición PENDIENTE→CONFIRMADO automática vía webhook
+La transición PENDIENTE→CONFIRMADO es realizada automáticamente por el webhook de MercadoPago cuando el pago es aprobado. Ningún rol puede hacer esta transición manualmente.
 
-#### Scenario: Admin confirma pedido
-- **WHEN** un ADMIN envía PATCH con estado_codigo=CONFIRMADO sobre un pedido PENDIENTE
-- **THEN** el sistema transiciona el pedido y decrementa el stock
+#### Scenario: Webhook confirma pedido
+- **WHEN** el webhook de MercadoPago notifica un pago approved para un pedido PENDIENTE
+- **THEN** el sistema transiciona el pedido a CONFIRMADO y decrementa el stock atómicamente (vía UoW)
 
-#### Scenario: Gestor de Pedidos no puede confirmar
-- **WHEN** un usuario con rol PEDIDOS intenta la transición PENDIENTE→CONFIRMADO
-- **THEN** el sistema rechaza con error 403
+#### Scenario: Admin ya no puede confirmar manualmente
+- **WHEN** cualquier usuario envía PATCH con estado_codigo=CONFIRMADO sobre un pedido PENDIENTE
+- **THEN** el sistema rechaza con error 400 indicando que la transición PENDIENTE→CONFIRMADO solo puede ocurrir automáticamente vía webhook
 
 ## Reglas de Negocio
 
@@ -151,7 +151,7 @@ El sistema SHALL permitir la transición PENDIENTE→CONFIRMADO solo para usuari
 - RN-PE03: Snapshot de dirección en Pedido
 - RN-PE04: Validar stock con SELECT FOR UPDATE
 - RN-FS01: Solo siguiente estado en secuencia
-- RN-FS02: PENDIENTE→CONFIRMADO solo automático (temporal: solo ADMIN)
+- RN-FS02: PENDIENTE→CONFIRMADO solo automático vía webhook de MercadoPago. Ningún rol puede hacer esta transición manualmente
 - RN-FS03: Decrementar stock al confirmar
 - RN-FS04: Restaurar stock al cancelar confirmado
 - RN-FS05: Estados terminales son finales

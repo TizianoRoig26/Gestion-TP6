@@ -12,6 +12,7 @@ from modules.auth.schemas import (
     LoginRequest,
     RegisterRequest,
     TokenResponse,
+    AuthResponse,
     UserResponse,
     RefreshRequest,
     LogoutRequest
@@ -22,7 +23,7 @@ from db.models import Usuario
 router = APIRouter()
 
 
-@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
 def register(request: RegisterRequest, session: Session = Depends(get_session)):
     """Register a new user."""
     try:
@@ -34,17 +35,26 @@ def register(request: RegisterRequest, session: Session = Depends(get_session)):
             telefono=request.telefono
         )
 
-        return TokenResponse(
+        roles = auth_service.get_user_roles(usuario.id)
+
+        return AuthResponse(
             access_token=access_token,
             refresh_token=refresh_token,
             token_type="Bearer",
-            expires_in=1800
+            expires_in=1800,
+            user=UserResponse(
+                id=usuario.id,
+                nombre=usuario.nombre,
+                email=usuario.email,
+                telefono=usuario.telefono,
+                roles=roles,
+            )
         )
     except ConflictException as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=AuthResponse)
 @limiter.limit("5/15 minutes")
 def login(request: Request, login_data: LoginRequest, session: Session = Depends(get_session)):
     """Login user. Rate limited: 5 attempts per 15 minutes."""
@@ -55,28 +65,46 @@ def login(request: Request, login_data: LoginRequest, session: Session = Depends
             password=login_data.password
         )
 
-        return TokenResponse(
+        roles = auth_service.get_user_roles(usuario.id)
+
+        return AuthResponse(
             access_token=access_token,
             refresh_token=refresh_token,
             token_type="Bearer",
-            expires_in=1800
+            expires_in=1800,
+            user=UserResponse(
+                id=usuario.id,
+                nombre=usuario.nombre,
+                email=usuario.email,
+                telefono=usuario.telefono,
+                roles=roles,
+            )
         )
     except UnauthorizedException as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
-@router.post("/refresh", response_model=TokenResponse)
+@router.post("/refresh", response_model=AuthResponse)
 def refresh(request: RefreshRequest, session: Session = Depends(get_session)):
     """Refresh access token."""
     try:
         auth_service = AuthService(session)
         usuario, access_token, refresh_token = auth_service.refresh(request.refresh_token)
 
-        return TokenResponse(
+        roles = auth_service.get_user_roles(usuario.id)
+
+        return AuthResponse(
             access_token=access_token,
             refresh_token=refresh_token,
             token_type="Bearer",
-            expires_in=1800
+            expires_in=1800,
+            user=UserResponse(
+                id=usuario.id,
+                nombre=usuario.nombre,
+                email=usuario.email,
+                telefono=usuario.telefono,
+                roles=roles,
+            )
         )
     except UnauthorizedException as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))

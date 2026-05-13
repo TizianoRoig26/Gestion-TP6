@@ -50,6 +50,19 @@ class TokenResponse(BaseModel):
     model_config = {"json_schema_extra": {"example": {"access_token": "eyJ...", "refresh_token": "...", "token_type": "Bearer", "expires_in": 1800}}}
 
 
+class AuthResponse(TokenResponse):
+    """Login/Register response with user data."""
+    user: "UserResponse"
+
+    model_config = {"json_schema_extra": {"example": {
+        "access_token": "eyJ...",
+        "refresh_token": "...",
+        "token_type": "Bearer",
+        "expires_in": 1800,
+        "user": {"id": 1, "nombre": "Admin", "email": "admin@foodstore.com", "roles": ["ADMIN"]},
+    }}}
+
+
 class UserResponse(BaseModel):
     """User response schema."""
     id: int

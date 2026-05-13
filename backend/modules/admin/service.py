@@ -200,7 +200,7 @@ class AdminService:
               AND p.creado_en >= :desde
               AND p.creado_en <= :hasta
         """)
-        sales_result = self.session.exec(sales_query, {"desde": desde, "hasta": hasta + " 23:59:59"}).one()
+        sales_result = self.session.exec(sales_query, params={"desde": desde, "hasta": hasta + " 23:59:59"}).one()
 
         # User count
         user_count = self.session.exec(
@@ -243,7 +243,7 @@ class AdminService:
             ORDER BY fecha ASC
         """)
 
-        results = self.session.exec(query, {"desde": desde, "hasta": hasta + " 23:59:59"}).all()
+        results = self.session.exec(query, params={"desde": desde, "hasta": hasta + " 23:59:59"}).all()
 
         return [
             {"fecha": str(r[0]), "monto_total": float(r[1] or 0), "cantidad_pedidos": int(r[2] or 0)}
@@ -274,7 +274,7 @@ class AdminService:
             LIMIT :top
         """)
 
-        results = self.session.exec(query, {
+        results = self.session.exec(query, params={
             "desde": desde, "hasta": hasta + " 23:59:59", "top": top
         }).all()
 
@@ -308,7 +308,7 @@ class AdminService:
             ORDER BY cantidad DESC
         """)
 
-        results = self.session.exec(query, {"desde": desde, "hasta": hasta + " 23:59:59"}).all()
+        results = self.session.exec(query, params={"desde": desde, "hasta": hasta + " 23:59:59"}).all()
 
         return [
             {

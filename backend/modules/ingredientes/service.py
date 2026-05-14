@@ -42,13 +42,17 @@ class IngredienteService:
                 existing.eliminado_en = None
                 existing.es_alergeno = data.get("es_alergeno", False)
                 existing.descripcion = data.get("descripcion")
-                return self.repo.update(existing)
+                existing = self.repo.update(existing)
+                self.session.commit()
+                return existing
             raise ConflictException(
                 f"Ya existe un ingrediente con el nombre '{data['nombre']}'"
             )
 
         ingrediente = Ingrediente(**data)
-        return self.repo.create(ingrediente)
+        ingrediente = self.repo.create(ingrediente)
+        self.session.commit()
+        return ingrediente
 
     def update(self, ingrediente_id: int, data: dict) -> Ingrediente:
         """Update an ingredient."""
@@ -70,7 +74,9 @@ class IngredienteService:
         for field, value in data.items():
             setattr(ingrediente, field, value)
 
-        return self.repo.update(ingrediente)
+        ingrediente = self.repo.update(ingrediente)
+        self.session.commit()
+        return ingrediente
 
     def soft_delete(self, ingrediente_id: int) -> None:
         """Soft delete an ingredient."""
@@ -82,3 +88,4 @@ class IngredienteService:
             )
 
         self.repo.soft_delete(ingrediente)
+        self.session.commit()

@@ -155,11 +155,11 @@ export function useCambiarEstado() {
   return useMutation({
     mutationFn: ({ pedidoId, data }: { pedidoId: number; data: CambioEstadoRequest }) =>
       cambiarEstadoPedido(pedidoId, data),
-    onSuccess: (_, variables) => {
-      // Invalidate both the specific order and the list
-      queryClient.invalidateQueries({ queryKey: [ORDER_KEY, variables.pedidoId] });
-      queryClient.invalidateQueries({ queryKey: [ORDERS_KEY] });
-      queryClient.invalidateQueries({ queryKey: [HISTORY_KEY, variables.pedidoId] });
+    onSuccess: () => {
+      // Invalidate ALL queries related to pedidos (admin + client)
+      queryClient.invalidateQueries({ queryKey: [ORDER_KEY] });     // pedido detail (admin + client)
+      queryClient.invalidateQueries({ queryKey: [ORDERS_KEY] });    // pedidos list (admin + client)
+      queryClient.invalidateQueries({ queryKey: [HISTORY_KEY] });   // historial (admin + client)
     },
   });
 }

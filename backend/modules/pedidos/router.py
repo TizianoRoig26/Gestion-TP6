@@ -234,7 +234,7 @@ def cambiar_estado_pedido(
     - Ejecuta side-effects (stock, historial)
     
     Transiciones permitidas:
-    - PENDIENTE → CONFIRMADO (solo automático vía webhook MercadoPago)
+    - PENDIENTE → CONFIRMADO (ADMIN/PEDIDOS manual o vía webhook MP)
     - PENDIENTE → CANCELADO
     - CONFIRMADO → EN_PREPARACION
     - CONFIRMADO → CANCELADO

@@ -12,7 +12,7 @@ import type { PedidoResumen, HistorialEstado } from "../../entities/order/types"
 // ─── FSM: transiciones disponibles para admin ──────────────
 
 const FSM_TRANSITIONS: Record<string, string[]> = {
-  PENDIENTE: ["CANCELADO"],
+  PENDIENTE: ["CONFIRMADO", "CANCELADO"],
   CONFIRMADO: ["EN_PREPARACION", "CANCELADO"],
   EN_PREPARACION: ["EN_CAMINO", "CANCELADO"],
   EN_CAMINO: ["ENTREGADO"],

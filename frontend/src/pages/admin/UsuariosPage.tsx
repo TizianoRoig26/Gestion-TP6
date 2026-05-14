@@ -187,7 +187,7 @@ export function AdminUsuariosPage() {
     setDeactivateModal((prev) => ({ ...prev, saving: true, error: "" }));
 
     try {
-      await toggleEstado.mutateAsync({
+      await toggleEstadoMutation.mutateAsync({
         userId: deactivateModal.user.id,
         activo: !deactivateModal.user.activo,
       });
@@ -199,7 +199,7 @@ export function AdminUsuariosPage() {
         error: getErrorMessage(err),
       }));
     }
-  }, [deactivateModal, toggleEstado, closeDeactivateModal]);
+  }, [deactivateModal, toggleEstadoMutation, closeDeactivateModal]);
 
   // ── Search handler with debounce ──
   const handleSearchChange = useCallback(

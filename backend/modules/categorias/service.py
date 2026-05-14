@@ -55,7 +55,9 @@ class CategoriaService:
                 )
 
         categoria = Categoria(**data)
-        return self.repo.create(categoria)
+        categoria = self.repo.create(categoria)
+        self.session.commit()
+        return categoria
 
     def update(self, categoria_id: int, data: dict) -> Categoria:
         """Update a category."""
@@ -95,7 +97,9 @@ class CategoriaService:
         for field, value in update_data.items():
             setattr(categoria, field, value)
 
-        return self.repo.update(categoria)
+        categoria = self.repo.update(categoria)
+        self.session.commit()
+        return categoria
 
     def soft_delete(self, categoria_id: int) -> None:
         """Soft delete a category."""
@@ -119,3 +123,4 @@ class CategoriaService:
             )
 
         self.repo.soft_delete(categoria)
+        self.session.commit()

@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "./axios";
+import type { Producto, PaginatedResponse } from "../../entities/product/types";
+import type { Categoria, Ingrediente } from "../../entities/category/types";
 
 // ===========================================
 // Types (matching backend schemas)
@@ -252,5 +254,303 @@ export function useToggleEstado() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [ADMIN_KEY, "usuarios"] });
     },
+  });
+}
+
+// ===========================================
+// Admin Catalog — Types
+// ===========================================
+
+export interface AdminProductoCreate {
+  nombre: string;
+  descripcion?: string;
+  imagen_url?: string;
+  precio_base: number;
+  stock_cantidad: number;
+  disponible: boolean;
+  categoria_ids: number[];
+  ingrediente_ids: number[];
+}
+
+export interface AdminProductoUpdate {
+  nombre?: string;
+  descripcion?: string;
+  imagen_url?: string;
+  precio_base?: number;
+  disponible?: boolean;
+  categoria_ids?: number[];
+  ingrediente_ids?: number[];
+}
+
+export interface AdminCategoriaCreate {
+  nombre: string;
+  descripcion?: string;
+  imagen?: string;
+  padre_id?: number | null;
+}
+
+export interface AdminCategoriaUpdate {
+  nombre?: string;
+  descripcion?: string;
+  imagen?: string;
+  padre_id?: number | null;
+}
+
+export interface AdminIngredienteCreate {
+  nombre: string;
+  descripcion?: string;
+  es_alergeno: boolean;
+}
+
+export interface AdminIngredienteUpdate {
+  nombre?: string;
+  descripcion?: string;
+  es_alergeno?: boolean;
+}
+
+// ===========================================
+// Admin Catalog — Query Keys
+// ===========================================
+const ADMIN_CATALOGO_KEY = "admin-catalogo";
+
+// ===========================================
+// Admin Catalog — Fetchers
+// ===========================================
+
+async function createProducto(data: AdminProductoCreate): Promise<Producto> {
+  const response = await api.post("/productos", data);
+  return response.data;
+}
+
+async function updateProducto(
+  id: number,
+  data: AdminProductoUpdate,
+): Promise<Producto> {
+  const response = await api.patch(`/productos/${id}`, data);
+  return response.data;
+}
+
+async function deleteProducto(id: number): Promise<void> {
+  await api.delete(`/productos/${id}`);
+}
+
+async function createCategoria(
+  data: AdminCategoriaCreate,
+): Promise<Categoria> {
+  const response = await api.post("/categorias", data);
+  return response.data;
+}
+
+async function updateCategoria(
+  id: number,
+  data: AdminCategoriaUpdate,
+): Promise<Categoria> {
+  const response = await api.patch(`/categorias/${id}`, data);
+  return response.data;
+}
+
+async function deleteCategoria(id: number): Promise<void> {
+  await api.delete(`/categorias/${id}`);
+}
+
+async function createIngrediente(
+  data: AdminIngredienteCreate,
+): Promise<Ingrediente> {
+  const response = await api.post("/ingredientes", data);
+  return response.data;
+}
+
+async function updateIngrediente(
+  id: number,
+  data: AdminIngredienteUpdate,
+): Promise<Ingrediente> {
+  const response = await api.patch(`/ingredientes/${id}`, data);
+  return response.data;
+}
+
+async function deleteIngrediente(id: number): Promise<void> {
+  await api.delete(`/ingredientes/${id}`);
+}
+
+async function fetchAdminProductos(
+  search?: string,
+  page?: number,
+  pageSize?: number,
+): Promise<PaginatedResponse<Producto>> {
+  const params = new URLSearchParams();
+  if (page !== undefined) params.set("page", String(page));
+  if (pageSize !== undefined) params.set("page_size", String(pageSize));
+  if (search) params.set("search", search);
+  const queryStr = params.toString();
+  const response = await api.get(`/productos${queryStr ? `?${queryStr}` : ""}`);
+  return response.data;
+}
+
+async function fetchAdminCategorias(): Promise<Categoria[]> {
+  const response = await api.get("/categorias");
+  return response.data;
+}
+
+async function fetchAdminIngredientes(): Promise<Ingrediente[]> {
+  const response = await api.get("/ingredientes");
+  return response.data;
+}
+
+// ===========================================
+// Admin Catalog — Mutation Hooks
+// ===========================================
+
+export function useCreateProducto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: AdminProductoCreate) => createProducto(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_CATALOGO_KEY, "productos"],
+      });
+    },
+  });
+}
+
+export function useUpdateProducto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: AdminProductoUpdate;
+    }) => updateProducto(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_CATALOGO_KEY, "productos"],
+      });
+    },
+  });
+}
+
+export function useDeleteProducto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteProducto(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_CATALOGO_KEY, "productos"],
+      });
+    },
+  });
+}
+
+export function useCreateCategoria() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: AdminCategoriaCreate) => createCategoria(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_CATALOGO_KEY, "categorias"],
+      });
+    },
+  });
+}
+
+export function useUpdateCategoria() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: AdminCategoriaUpdate;
+    }) => updateCategoria(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_CATALOGO_KEY, "categorias"],
+      });
+    },
+  });
+}
+
+export function useDeleteCategoria() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteCategoria(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_CATALOGO_KEY, "categorias"],
+      });
+    },
+  });
+}
+
+export function useCreateIngrediente() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: AdminIngredienteCreate) => createIngrediente(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_CATALOGO_KEY, "ingredientes"],
+      });
+    },
+  });
+}
+
+export function useUpdateIngrediente() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: AdminIngredienteUpdate;
+    }) => updateIngrediente(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_CATALOGO_KEY, "ingredientes"],
+      });
+    },
+  });
+}
+
+export function useDeleteIngrediente() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteIngrediente(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ADMIN_CATALOGO_KEY, "ingredientes"],
+      });
+    },
+  });
+}
+
+// ===========================================
+// Admin Catalog — Query Hooks
+// ===========================================
+
+export function useAdminProductos(
+  search?: string,
+  page?: number,
+  pageSize?: number,
+) {
+  return useQuery({
+    queryKey: [ADMIN_CATALOGO_KEY, "productos", { search, page, pageSize }],
+    queryFn: () => fetchAdminProductos(search, page, pageSize),
+  });
+}
+
+export function useAdminCategorias() {
+  return useQuery({
+    queryKey: [ADMIN_CATALOGO_KEY, "categorias"],
+    queryFn: () => fetchAdminCategorias(),
+  });
+}
+
+export function useAdminIngredientes() {
+  return useQuery({
+    queryKey: [ADMIN_CATALOGO_KEY, "ingredientes"],
+    queryFn: () => fetchAdminIngredientes(),
   });
 }

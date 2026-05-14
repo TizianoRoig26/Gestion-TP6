@@ -8,13 +8,13 @@ export function LoginPage() {
         <h2 className="text-2xl font-bold text-center mb-8">
           Iniciar Sesión
         </h2>
-        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-white p-8 rounded-xl shadow-sm border border-border-default">
           <LoginForm />
-          <p className="text-center mt-4 text-sm text-gray-600">
+          <p className="text-center mt-4 text-sm text-text-secondary">
             ¿No tenés cuenta?{" "}
             <Link
               to="/register"
-              className="text-blue-600 hover:text-blue-700"
+              className="text-primary-500 hover:text-primary-600"
             >
               Registrate
             </Link>

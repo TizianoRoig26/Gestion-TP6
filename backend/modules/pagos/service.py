@@ -22,7 +22,14 @@ class PagoService:
         self.repo = PagoRepository(session)
         self.sdk = mercadopago.SDK(settings.mp_access_token)
 
-    def crear_pago(self, pedido_id: int, card_token: str, usuario_id: int) -> dict[str, Any]:
+    def crear_pago(
+        self,
+        pedido_id: int,
+        card_token: str,
+        usuario_id: int,
+        payment_method_id: Optional[str] = None,
+        payer_email: Optional[str] = None,
+    ) -> dict[str, Any]:
         """
         Create a payment with MercadoPago.
         
@@ -76,9 +83,9 @@ class PagoService:
                 "token": card_token,
                 "description": f"Food Store - Pedido #{pedido_id}",
                 "installments": 1,
-                "payment_method_id": "visa",
+                "payment_method_id": payment_method_id or "visa",
                 "payer": {
-                    "email": "test@test.com",
+                    "email": payer_email or "test@test.com",
                 },
                 "external_reference": external_reference,
             }

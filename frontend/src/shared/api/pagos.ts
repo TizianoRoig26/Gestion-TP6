@@ -13,6 +13,7 @@ const PAGOS_KEY = "pagos";
 export interface PagoCreateRequest {
   pedido_id: number;
   card_token: string;
+  payment_method_id?: string;
 }
 
 export interface PagoResponse {

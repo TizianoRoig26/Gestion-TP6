@@ -16,7 +16,7 @@ export function ProductInfo({ nombre, descripcion, precio, categorias }: Product
           {categorias.map((cat) => (
             <span
               key={cat.id}
-              className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+              className="text-sm bg-primary-50 text-primary-600 px-3 py-1 rounded-full"
             >
               {cat.nombre}
             </span>
@@ -25,15 +25,15 @@ export function ProductInfo({ nombre, descripcion, precio, categorias }: Product
       )}
 
       {/* Product name */}
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">{nombre}</h1>
+      <h1 className="text-2xl font-bold text-text-primary mb-2">{nombre}</h1>
 
       {/* Description */}
       {descripcion && (
-        <p className="text-gray-600 mb-4">{descripcion}</p>
+        <p className="text-text-secondary mb-4">{descripcion}</p>
       )}
 
       {/* Price */}
-      <div className="text-3xl font-bold text-gray-900">
+      <div className="text-3xl font-bold text-text-primary">
         ${precio.toFixed(2)}
       </div>
     </div>

@@ -10,9 +10,9 @@ export function CartItemRow({ item, onUpdateQuantity, onRemove }: CartItemRowPro
   const subtotal = item.producto.precio * item.cantidad;
 
   return (
-    <div className="flex items-center gap-4 py-4 border-b border-gray-100 last:border-0">
+    <div className="flex items-center gap-4 py-4 border-b border-border-subtle last:border-0">
       {/* Image */}
-      <div className="w-20 h-20 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
+      <div className="w-20 h-20 rounded-lg bg-surface-secondary flex items-center justify-center flex-shrink-0">
         {item.producto.imagen ? (
           <img
             src={item.producto.imagen}
@@ -20,7 +20,7 @@ export function CartItemRow({ item, onUpdateQuantity, onRemove }: CartItemRowPro
             className="w-full h-full object-contain rounded-lg"
           />
         ) : (
-          <div className="text-gray-300">
+          <div className="text-text-disabled">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
@@ -32,31 +32,31 @@ export function CartItemRow({ item, onUpdateQuantity, onRemove }: CartItemRowPro
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <h3 className="font-medium text-gray-900 truncate">{item.producto.nombre}</h3>
-        <p className="text-sm text-gray-500">${item.producto.precio.toFixed(2)} c/u</p>
+        <h3 className="font-medium text-text-primary truncate">{item.producto.nombre}</h3>
+        <p className="text-sm text-text-secondary">${item.producto.precio.toFixed(2)} c/u</p>
 
         {item.personalizacion?.ingredientesExcluidos &&
           item.personalizacion.ingredientesExcluidos.length > 0 && (
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-xs text-text-tertiary mt-0.5">
             Sin {item.personalizacion.ingredientesExcluidos.length} ingrediente(s)
           </p>
         )}
       </div>
 
       {/* Quantity selector */}
-      <div className="flex items-center border border-gray-200 rounded-lg">
+      <div className="flex items-center border border-border-default rounded-lg">
         <button
           onClick={() => onUpdateQuantity(item.productoId, item.cantidad - 1)}
-          className="px-3 py-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors"
+          className="px-3 py-1.5 text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
         >
           −
         </button>
-        <span className="px-3 py-1.5 text-sm font-medium text-gray-900 min-w-[2rem] text-center">
+        <span className="px-3 py-1.5 text-sm font-medium text-text-primary min-w-[2rem] text-center">
           {item.cantidad}
         </span>
         <button
           onClick={() => onUpdateQuantity(item.productoId, item.cantidad + 1)}
-          className="px-3 py-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors"
+          className="px-3 py-1.5 text-text-secondary hover:text-text-primary hover:bg-surface-secondary transition-colors"
         >
           +
         </button>
@@ -64,13 +64,13 @@ export function CartItemRow({ item, onUpdateQuantity, onRemove }: CartItemRowPro
 
       {/* Subtotal */}
       <div className="text-right min-w-[5rem]">
-        <p className="font-semibold text-gray-900">${subtotal.toFixed(2)}</p>
+        <p className="font-semibold text-text-primary">${subtotal.toFixed(2)}</p>
       </div>
 
       {/* Remove */}
       <button
         onClick={() => onRemove(item.productoId)}
-        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+        className="p-2 text-text-tertiary hover:text-danger-500 transition-colors"
         title="Eliminar"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

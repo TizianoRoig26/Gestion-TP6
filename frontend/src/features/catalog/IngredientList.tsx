@@ -13,12 +13,12 @@ export function IngredientList({ ingredientes }: IngredientListProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-2">Ingredientes</h3>
+        <h3 className="text-sm font-semibold text-text-primary mb-2">Ingredientes</h3>
         <div className="flex flex-wrap gap-2">
           {nonAllergens.map((ing) => (
             <span
               key={ing.id}
-              className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full"
+              className="text-sm bg-surface-tertiary text-text-primary px-3 py-1 rounded-full"
             >
               {ing.nombre}
             </span>
@@ -28,12 +28,12 @@ export function IngredientList({ ingredientes }: IngredientListProps) {
 
       {allergens.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">Alérgenos</h3>
+          <h3 className="text-sm font-semibold text-text-primary mb-2">Alérgenos</h3>
           <div className="flex flex-wrap gap-2">
             {allergens.map((ing) => (
               <span
                 key={ing.id}
-                className="inline-flex items-center gap-1 text-sm bg-red-50 text-red-700 border border-red-200 px-3 py-1 rounded-full font-medium"
+                className="inline-flex items-center gap-1 text-sm bg-danger-50 text-danger-600 border border-danger-200 px-3 py-1 rounded-full font-medium"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path

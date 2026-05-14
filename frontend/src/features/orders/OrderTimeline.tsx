@@ -63,11 +63,11 @@ export function OrderTimeline({ historial, estadoActual }: OrderTimelineProps) {
                   className={`w-8 h-8 rounded-full flex items-center justify-center border-2 flex-shrink-0
                     ${isCompleted || isCurrent
                       ? isCancelled && state === "CANCELADO"
-                        ? "bg-red-500 border-red-500 text-white"
+                        ? "bg-danger-500 border-danger-500 text-white"
                         : isCompleted && isTerminal
-                          ? "bg-green-500 border-green-500 text-white"
-                          : "bg-blue-600 border-blue-600 text-white"
-                      : "bg-white border-gray-300 text-gray-400"
+                          ? "bg-secondary-500 border-secondary-500 text-white"
+                          : "bg-primary-500 border-primary-500 text-white"
+                      : "bg-white border-text-disabled text-text-tertiary"
                     }`}
                 >
                   {isCompleted || isCurrent ? (
@@ -87,7 +87,7 @@ export function OrderTimeline({ historial, estadoActual }: OrderTimelineProps) {
                 {index < FSM_STATES.length - 1 && (
                   <div
                     className={`w-0.5 h-8 ${
-                      isPast && !isCancelled ? "bg-blue-200" : "bg-gray-200"
+                      isPast && !isCancelled ? "bg-primary-100" : "bg-surface-secondary"
                     }`}
                   />
                 )}
@@ -95,29 +95,29 @@ export function OrderTimeline({ historial, estadoActual }: OrderTimelineProps) {
 
               {/* Content */}
               <div className={`pb-6 ${!isCompleted && !isCurrent ? "opacity-50" : ""}`}>
-                <p className="font-medium text-sm text-gray-900">
+                <p className="font-medium text-sm text-text-primary">
                   {STATE_LABELS[state] || state}
                   {cancelledFromLabel && (
-                    <span className="text-gray-400 font-normal ml-1">{cancelledFromLabel}</span>
+                    <span className="text-text-tertiary font-normal ml-1">{cancelledFromLabel}</span>
                   )}
                 </p>
                 {historyEntry && (
                   <div className="mt-0.5 space-y-0.5">
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-text-secondary">
                       {new Date(historyEntry.creado_en).toLocaleString("es-AR")}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-text-tertiary">
                       por {getActorInfo(historyEntry)}
                     </p>
                     {historyEntry.observacion && !historyEntry.observacion.startsWith("Transición:") && (
-                      <p className="text-xs text-gray-500 italic">
+                      <p className="text-xs text-text-secondary italic">
                         "{historyEntry.observacion}"
                       </p>
                     )}
                   </div>
                 )}
                 {isCurrent && !isCompleted && (
-                  <p className="text-xs text-blue-600 font-medium mt-0.5">Estado actual</p>
+                  <p className="text-xs text-primary-500 font-medium mt-0.5">Estado actual</p>
                 )}
               </div>
             </div>

@@ -3,10 +3,10 @@ import { useUiStore } from "../stores/uiStore";
 import type { Toast as ToastType } from "../stores/uiStore";
 
 const typeStyles: Record<ToastType["type"], string> = {
-  success: "bg-green-50 border-green-200 text-green-800",
-  error: "bg-red-50 border-red-200 text-red-800",
-  info: "bg-blue-50 border-blue-200 text-blue-800",
-  warning: "bg-yellow-50 border-yellow-200 text-yellow-800",
+  success: "bg-secondary-50 border-secondary-200 text-secondary-600",
+  error: "bg-danger-50 border-danger-200 text-danger-600",
+  info: "bg-primary-50 border-primary-200 text-primary-600",
+  warning: "bg-accent-50 border-accent-200 text-accent-600",
 };
 
 function ToastItem({ toast }: { toast: ToastType }) {

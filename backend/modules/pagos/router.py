@@ -40,6 +40,8 @@ def crear_pago(
         pedido_id=data.pedido_id,
         card_token=data.card_token,
         usuario_id=current_user.id,
+        payment_method_id=data.payment_method_id,
+        payer_email=current_user.email,
     )
 
 

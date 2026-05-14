@@ -10,6 +10,7 @@ class PagoCreate(BaseModel):
     """Schema for creating a payment."""
     pedido_id: int
     card_token: str = Field(..., min_length=1, description="Token de tarjeta generado por MercadoPago SDK")
+    payment_method_id: Optional[str] = Field(default=None, description="ID del método de pago desde el SDK de MP (visa, master, etc.)")
 
 
 class PagoResponse(BaseModel):

@@ -8,13 +8,13 @@ export function RegisterPage() {
         <h2 className="text-2xl font-bold text-center mb-8">
           Crear Cuenta
         </h2>
-        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-white p-8 rounded-xl shadow-sm border border-border-default">
           <RegisterForm />
-          <p className="text-center mt-4 text-sm text-gray-600">
+          <p className="text-center mt-4 text-sm text-text-secondary">
             ¿Ya tenés cuenta?{" "}
             <Link
               to="/login"
-              className="text-blue-600 hover:text-blue-700"
+              className="text-primary-500 hover:text-primary-600"
             >
               Iniciá Sesión
             </Link>

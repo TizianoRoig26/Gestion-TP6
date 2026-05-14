@@ -15,7 +15,7 @@ export function AllergenFilter({
 
   return (
     <div className="space-y-2">
-      <p className="text-sm font-medium text-gray-700">Alérgenos</p>
+      <p className="text-sm font-medium text-text-primary">Alérgenos</p>
       <div className="flex flex-wrap gap-2">
         {allergens.map((allergen) => (
           <button
@@ -25,8 +25,8 @@ export function AllergenFilter({
             }
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               selectedId === allergen.id
-                ? "bg-red-500 text-white"
-                : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                ? "bg-danger-500 text-white"
+                : "bg-danger-50 text-danger-600 hover:bg-danger-100 border border-danger-200"
             }`}
           >
             {allergen.nombre}

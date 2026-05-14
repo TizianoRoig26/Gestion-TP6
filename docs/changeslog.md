@@ -203,6 +203,30 @@ frontend/src/
 
 ---
 
+### ✅ refactor-frontend-design-tokens
+**Fecha**: 2026-05-14  
+**Status**: ✅ Completado (46 archivos frontend modificados)  
+**Archivado**: 2026-05-14
+
+| Artefacto | Status |
+|-----------|--------|
+| proposal.md | ✅ |
+| design.md | ✅ |
+| specs/frontend-design-system/spec.md | ✅ (nueva capability) |
+| tasks.md | ✅ (completadas) |
+
+**Descripción**: Migración visual completa del frontend al nuevo sistema de diseño:
+- **Paleta de marca**: Harvest Ochre (primary), Garden Green (secondary), Saffron Gold (accent), Seared Crimson (danger)
+- **Superficies**: Off-white cálido (#FDFBF9) con variantes surface-secondary/tertiary
+- **Tipografía**: Inter con escala headline-lg, headline-md, body-lg, body-md, label-sm
+- **Elevación flat-plus**: Sin sombras agresivas, solo `shadow-ambient` con destello cálido en hover
+- **Sidebar**: Harvest Ochre profundo (primary-800) en lugar de gray-900 genérico
+- **Tokens**: Definidos en `frontend/src/style.css` con `@theme` de Tailwind v4
+- **Fuente de verdad**: `docs/Design.md` con filosofía, paleta, componentes y brief de marca
+- **46 archivos migrados**: shared/ui, widgets, features (catalog, orders, auth, cart), pages (client + admin), guards, router
+
+---
+
 ## Cambios Pendientes
 
 _No hay cambios pendientes._
@@ -213,7 +237,7 @@ _No hay cambios pendientes._
 
 | Métrica | Valor |
 |---------|-------|
-| Changes completados | 6 |
+| Changes completados | 7 |
 | Changes en progreso | 0 |
 | Changes pendientes | 0 |
 | Tareas completadas | 231 / 231 (100%) — backend 61 + frontend 57 + catalogo 44 + pedidos 47 + admin 32 + pagos 21* |
@@ -289,4 +313,4 @@ openspec status --change <nombre> --json
 
 ---
 
-_Last updated: 2026-05-12_
+_Last updated: 2026-05-14_

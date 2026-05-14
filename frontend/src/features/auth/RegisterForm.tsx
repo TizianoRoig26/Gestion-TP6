@@ -56,7 +56,7 @@ export function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-danger-50 border border-danger-200 text-danger-600 px-4 py-3 rounded-lg text-sm">
           {error}
         </div>
       )}
@@ -64,7 +64,7 @@ export function RegisterForm() {
       <div>
         <label
           htmlFor="nombre"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-text-primary mb-1"
         >
           Nombre
         </label>
@@ -74,7 +74,7 @@ export function RegisterForm() {
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent"
           placeholder="Tu nombre"
         />
       </div>
@@ -82,7 +82,7 @@ export function RegisterForm() {
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-text-primary mb-1"
         >
           Email
         </label>
@@ -93,7 +93,7 @@ export function RegisterForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent"
           placeholder="tu@email.com"
         />
       </div>
@@ -101,7 +101,7 @@ export function RegisterForm() {
       <div>
         <label
           htmlFor="password"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-text-primary mb-1"
         >
           Contraseña
         </label>
@@ -113,7 +113,7 @@ export function RegisterForm() {
           required
           minLength={8}
           autoComplete="new-password"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent"
           placeholder="Mínimo 8 caracteres"
         />
       </div>
@@ -121,7 +121,7 @@ export function RegisterForm() {
       <div>
         <label
           htmlFor="confirmPassword"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-text-primary mb-1"
         >
           Confirmar Contraseña
         </label>
@@ -133,7 +133,7 @@ export function RegisterForm() {
           required
           minLength={8}
           autoComplete="new-password"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent"
           placeholder="Repetí la contraseña"
         />
       </div>
@@ -141,7 +141,7 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+        className="w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
       >
         {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
       </button>

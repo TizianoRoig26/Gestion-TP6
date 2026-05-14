@@ -18,12 +18,12 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white shadow-sm border-b border-border-default sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo + Navigation */}
           <div className="flex items-center gap-8">
-            <Link to="/" className="text-xl font-bold text-blue-600">
+            <Link to="/" className="text-xl font-bold text-primary-500">
               Food Store
             </Link>
             <nav className="hidden md:flex items-center gap-6">
@@ -35,8 +35,8 @@ export function Header() {
                   className={({ isActive }) =>
                     `transition-colors ${
                       isActive
-                        ? "text-blue-600 font-medium"
-                        : "text-gray-600 hover:text-blue-600"
+                        ? "text-primary-500 font-medium"
+                        : "text-text-secondary hover:text-primary-500"
                     }`
                   }
                 >
@@ -54,8 +54,8 @@ export function Header() {
               className={({ isActive }) =>
                 `relative p-2 transition-colors ${
                   isActive
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-blue-600"
+                    ? "text-primary-500"
+                    : "text-text-secondary hover:text-primary-500"
                 }`
               }
             >
@@ -74,7 +74,7 @@ export function Header() {
                 />
               </svg>
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-danger-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {totalItems > 99 ? "99+" : totalItems}
                 </span>
               )}
@@ -88,8 +88,8 @@ export function Header() {
                   className={({ isActive }) =>
                     `transition-colors ${
                       isActive
-                        ? "text-blue-600 font-medium"
-                        : "text-gray-600 hover:text-blue-600"
+                        ? "text-primary-500 font-medium"
+                        : "text-text-secondary hover:text-primary-500"
                     }`
                   }
                 >
@@ -103,21 +103,21 @@ export function Header() {
                     className={({ isActive }) =>
                       `transition-colors ${
                         isActive
-                          ? "text-blue-600 font-medium"
-                          : "text-gray-600 hover:text-blue-600"
+                          ? "text-primary-500 font-medium"
+                          : "text-text-secondary hover:text-primary-500"
                       }`
                     }
                   >
                     Admin
                   </NavLink>
                 )}
-                <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
-                  <span className="text-sm text-gray-700 font-medium">
+                <div className="flex items-center gap-2 pl-2 border-l border-border-default">
+                  <span className="text-sm text-text-primary font-medium">
                     {user?.nombre}
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="text-sm text-gray-500 hover:text-red-600 transition-colors"
+                    className="text-sm text-text-tertiary hover:text-danger-600 transition-colors"
                   >
                     Cerrar sesión
                   </button>
@@ -127,13 +127,13 @@ export function Header() {
               <>
                 <Link
                   to="/login"
-                  className="text-gray-600 hover:text-blue-600 transition-colors"
+                  className="text-text-secondary hover:text-primary-500 transition-colors"
                 >
                   Iniciar Sesión
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors"
                 >
                   Registrarse
                 </Link>

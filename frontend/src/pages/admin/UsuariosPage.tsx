@@ -49,14 +49,14 @@ const initialDeactivate: DeactivateModalState = {
 // ─── Colores para roles ────────────────────────────────────
 
 const ROLE_BADGE: Record<string, string> = {
-  ADMIN: "bg-red-100 text-red-700",
-  CLIENT: "bg-blue-100 text-blue-700",
-  STOCK: "bg-yellow-100 text-yellow-700",
-  PEDIDOS: "bg-purple-100 text-purple-700",
+  ADMIN: "bg-danger-100 text-danger-600",
+  CLIENT: "bg-primary-100 text-primary-600",
+  STOCK: "bg-accent-100 text-accent-600",
+  PEDIDOS: "bg-secondary-100 text-secondary-600",
 };
 
 function RoleBadge({ role }: { role: string }) {
-  const color = ROLE_BADGE[role] ?? "bg-gray-100 text-gray-700";
+  const color = ROLE_BADGE[role] ?? "bg-surface-tertiary text-text-primary";
   return (
     <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${color}`}>
       {role}
@@ -80,10 +80,10 @@ function Modal({
       <div className="fixed inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-white rounded-xl shadow-xl max-w-lg w-full mx-4 p-6 z-10">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <h3 className="text-lg font-semibold text-text-primary">{title}</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-text-tertiary hover:text-text-secondary transition-colors"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -222,16 +222,16 @@ export function AdminUsuariosPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800">Usuarios</h2>
-        <p className="text-sm text-gray-500 mt-1">
+        <h2 className="text-2xl font-bold text-text-primary">Usuarios</h2>
+        <p className="text-sm text-text-secondary mt-1">
           Gestion de usuarios del sistema
         </p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-wrap items-center gap-4">
+      <div className="bg-white rounded-xl shadow-sm border border-border-default p-4 flex flex-wrap items-center gap-4">
         <div className="flex-1 min-w-[200px]">
-          <label className="block text-xs font-medium text-gray-600 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1">
             Buscar
           </label>
           <input
@@ -239,17 +239,17 @@ export function AdminUsuariosPage() {
             value={busqueda}
             onChange={handleSearchChange}
             placeholder="Nombre o email..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1">
             Filtro por rol
           </label>
           <select
             value={filtroRol}
             onChange={handleRoleFilterChange}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           >
             <option value="">Todos los roles</option>
             {ROLES_DISPONIBLES.map((r) => (
@@ -263,33 +263,33 @@ export function AdminUsuariosPage() {
 
       {/* Error state */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-danger-50 border border-danger-200 text-danger-600 px-4 py-3 rounded-lg text-sm">
           {getErrorMessage(error)}
         </div>
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-border-default overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-4 py-3 font-medium text-gray-600">
+              <tr className="bg-surface-tertiary border-b border-border-default">
+                <th className="text-left px-4 py-3 font-medium text-text-secondary">
                   ID
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">
+                <th className="text-left px-4 py-3 font-medium text-text-secondary">
                   Nombre
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">
+                <th className="text-left px-4 py-3 font-medium text-text-secondary">
                   Email
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">
+                <th className="text-left px-4 py-3 font-medium text-text-secondary">
                   Roles
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">
+                <th className="text-left px-4 py-3 font-medium text-text-secondary">
                   Estado
                 </th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600">
+                <th className="text-right px-4 py-3 font-medium text-text-secondary">
                   Acciones
                 </th>
               </tr>
@@ -297,13 +297,13 @@ export function AdminUsuariosPage() {
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={6} className="px-4 py-12 text-center text-text-tertiary">
                     Cargando usuarios...
                   </td>
                 </tr>
               ) : data?.items.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={6} className="px-4 py-12 text-center text-text-tertiary">
                     No se encontraron usuarios
                   </td>
                 </tr>
@@ -311,15 +311,15 @@ export function AdminUsuariosPage() {
                 data?.items.map((user, idx) => (
                   <tr
                     key={user.id}
-                    className={`hover:bg-gray-50 transition-colors ${
-                      idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                    className={`hover:bg-surface-secondary transition-colors ${
+                      idx % 2 === 0 ? "bg-white" : "bg-surface-secondary/50"
                     }`}
                   >
-                    <td className="px-4 py-3 text-gray-500">{user.id}</td>
-                    <td className="px-4 py-3 font-medium text-gray-900">
+                    <td className="px-4 py-3 text-text-secondary">{user.id}</td>
+                    <td className="px-4 py-3 font-medium text-text-primary">
                       {user.nombre}
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{user.email}</td>
+                    <td className="px-4 py-3 text-text-secondary">{user.email}</td>
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1">
                         {user.roles.map((role) => (
@@ -331,13 +331,13 @@ export function AdminUsuariosPage() {
                       <span
                         className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
                           user.activo
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
+                            ? "bg-secondary-100 text-secondary-600"
+                            : "bg-danger-100 text-danger-600"
                         }`}
                       >
                         <span
                           className={`w-1.5 h-1.5 rounded-full ${
-                            user.activo ? "bg-green-500" : "bg-red-500"
+                            user.activo ? "bg-secondary-500" : "bg-danger-500"
                           }`}
                         />
                         {user.activo ? "Activo" : "Inactivo"}
@@ -370,8 +370,8 @@ export function AdminUsuariosPage() {
 
         {/* Pagination */}
         {data && data.pages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
-            <p className="text-sm text-gray-600">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border-default bg-surface-tertiary">
+            <p className="text-sm text-text-secondary">
               Pagina {data.page} de {data.pages} ({data.total} usuarios)
             </p>
             <div className="flex gap-2">
@@ -401,7 +401,7 @@ export function AdminUsuariosPage() {
         <Modal title="Editar usuario" onClose={closeEditModal}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Nombre
               </label>
               <input
@@ -414,12 +414,12 @@ export function AdminUsuariosPage() {
                     error: "",
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Email
               </label>
               <input
@@ -432,12 +432,12 @@ export function AdminUsuariosPage() {
                     error: "",
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Rol
               </label>
               <select
@@ -449,7 +449,7 @@ export function AdminUsuariosPage() {
                     error: "",
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               >
                 {ROLES_DISPONIBLES.map((r) => (
                   <option key={r} value={r}>
@@ -460,7 +460,7 @@ export function AdminUsuariosPage() {
             </div>
 
             {editModal.error && (
-              <p className="text-sm text-red-600">{editModal.error}</p>
+              <p className="text-sm text-danger-600">{editModal.error}</p>
             )}
 
             <div className="flex justify-end gap-3 pt-2">
@@ -492,7 +492,7 @@ export function AdminUsuariosPage() {
           onClose={closeDeactivateModal}
         >
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-text-secondary">
               {deactivateModal.user.activo ? (
                 <>
                   ¿Estas seguro de desactivar a{" "}
@@ -513,13 +513,13 @@ export function AdminUsuariosPage() {
             {/* Self-deactivation guard */}
             {deactivateModal.user.activo &&
               currentUser?.id === deactivateModal.user.id && (
-                <div className="bg-amber-50 border border-amber-200 text-amber-700 px-3 py-2 rounded-lg text-sm">
+                <div className="bg-accent-50 border border-accent-200 text-accent-600 px-3 py-2 rounded-lg text-sm">
                   No podes desactivar tu propia cuenta.
                 </div>
               )}
 
             {deactivateModal.error && (
-              <p className="text-sm text-red-600">{deactivateModal.error}</p>
+              <p className="text-sm text-danger-600">{deactivateModal.error}</p>
             )}
 
             <div className="flex justify-end gap-3">

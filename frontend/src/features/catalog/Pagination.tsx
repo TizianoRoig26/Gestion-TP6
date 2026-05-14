@@ -12,8 +12,8 @@ export function Pagination({ page, pages, onChange }: PaginationProps) {
       <button
         onClick={() => onChange(page - 1)}
         disabled={page <= 1}
-        className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-200
-                   hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed
+        className="px-3 py-2 text-sm font-medium rounded-lg border border-border-default
+                   hover:bg-surface-secondary disabled:opacity-50 disabled:cursor-not-allowed
                    transition-colors"
       >
         Anterior
@@ -32,14 +32,14 @@ export function Pagination({ page, pages, onChange }: PaginationProps) {
           .map((p, idx, arr) => (
             <span key={p} className="flex items-center">
               {idx > 0 && arr[idx - 1] !== p - 1 && (
-                <span className="px-1 text-gray-400">...</span>
+                <span className="px-1 text-text-tertiary">...</span>
               )}
               <button
                 onClick={() => onChange(p)}
                 className={`w-9 h-9 text-sm font-medium rounded-lg transition-colors ${
                   p === page
-                    ? "bg-blue-600 text-white"
-                    : "hover:bg-gray-50 text-gray-700"
+                    ? "bg-primary-500 text-white"
+                    : "hover:bg-surface-secondary text-text-primary"
                 }`}
               >
                 {p}
@@ -51,8 +51,8 @@ export function Pagination({ page, pages, onChange }: PaginationProps) {
       <button
         onClick={() => onChange(page + 1)}
         disabled={page >= pages}
-        className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-200
-                   hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed
+        className="px-3 py-2 text-sm font-medium rounded-lg border border-border-default
+                   hover:bg-surface-secondary disabled:opacity-50 disabled:cursor-not-allowed
                    transition-colors"
       >
         Siguiente

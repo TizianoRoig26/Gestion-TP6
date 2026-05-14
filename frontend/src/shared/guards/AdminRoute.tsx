@@ -21,11 +21,11 @@ export function AdminRoute({ allowedRoles }: AdminRouteProps) {
   if (!hasRequiredRole) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <h2 className="text-4xl font-bold text-gray-300 mb-4">403</h2>
-        <p className="text-xl text-gray-600 mb-4">
+        <h2 className="text-4xl font-bold text-text-disabled mb-4">403</h2>
+        <p className="text-xl text-text-secondary mb-4">
           No tenés permisos para esta acción
         </p>
-        <p className="text-gray-500">
+        <p className="text-text-secondary">
           Si creés que esto es un error, contactá al administrador.
         </p>
       </div>

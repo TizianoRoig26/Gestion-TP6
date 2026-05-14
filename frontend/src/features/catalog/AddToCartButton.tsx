@@ -40,28 +40,28 @@ export function AddToCartButton({
     <div className="space-y-3">
       {/* Quantity selector */}
       <div className="flex items-center gap-3">
-        <span className="text-sm font-medium text-gray-700">Cantidad:</span>
-        <div className="flex items-center border border-gray-200 rounded-lg">
+        <span className="text-sm font-medium text-text-primary">Cantidad:</span>
+        <div className="flex items-center border border-border-default rounded-lg">
           <button
             onClick={() => setCantidad((prev) => Math.max(1, prev - 1))}
             disabled={cantidad <= 1 || outOfStock}
-            className="px-3 py-1.5 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-3 py-1.5 text-text-secondary hover:bg-surface-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             -
           </button>
-          <span className="px-4 py-1.5 text-sm font-medium text-gray-900 min-w-[40px] text-center border-x border-gray-200">
+          <span className="px-4 py-1.5 text-sm font-medium text-text-primary min-w-[40px] text-center border-x border-border-default">
             {cantidad}
           </span>
           <button
             onClick={() => setCantidad((prev) => Math.min(stock, prev + 1))}
             disabled={cantidad >= stock || outOfStock}
-            className="px-3 py-1.5 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-3 py-1.5 text-text-secondary hover:bg-surface-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             +
           </button>
         </div>
         {stock > 0 && stock <= 5 && (
-          <span className="text-sm text-orange-500">Solo quedan {stock}</span>
+          <span className="text-sm text-accent-500">Solo quedan {stock}</span>
         )}
       </div>
 

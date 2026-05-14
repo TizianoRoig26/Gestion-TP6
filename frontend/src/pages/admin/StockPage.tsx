@@ -79,11 +79,11 @@ function StockCell({
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
           disabled={saving}
-          className="w-20 px-2 py-1 border border-blue-400 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-20 px-2 py-1 border border-primary-400 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
         />
         {saving && (
           <svg
-            className="animate-spin h-4 w-4 text-blue-600"
+            className="animate-spin h-4 w-4 text-primary-500"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -109,12 +109,12 @@ function StockCell({
   return (
     <span
       onClick={() => setEditing(true)}
-      className={`cursor-pointer border border-transparent hover:border-gray-300 rounded px-2 py-1 inline-block transition-colors ${
+      className={`cursor-pointer border border-transparent hover:border-border-default rounded px-2 py-1 inline-block transition-colors ${
         isOutOfStock
-          ? "text-red-600 font-bold"
+          ? "text-danger-600 font-bold"
           : isLowStock
-            ? "text-red-500 font-medium"
-            : "text-gray-800"
+            ? "text-danger-500 font-medium"
+            : "text-text-primary"
       }`}
       title="Click para editar"
     >
@@ -156,10 +156,10 @@ function ToggleModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6 z-10">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-text-primary mb-2">
           {state.nuevoEstado ? "Habilitar producto" : "Deshabilitar producto"}
         </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-text-secondary mb-4">
           {state.nuevoEstado ? (
             <>
               ¿Estas seguro de habilitar <strong>{state.product.nombre}</strong>?
@@ -177,7 +177,7 @@ function ToggleModal({
           )}
         </p>
         {state.error && (
-          <p className="text-sm text-red-600 mb-4">{state.error}</p>
+          <p className="text-sm text-danger-600 mb-4">{state.error}</p>
         )}
         <div className="flex justify-end gap-3">
           <Button variant="secondary" onClick={onClose}>
@@ -274,16 +274,16 @@ export function AdminStockPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800">Stock</h2>
-        <p className="text-sm text-gray-500 mt-1">
+        <h2 className="text-2xl font-bold text-text-primary">Stock</h2>
+        <p className="text-sm text-text-secondary mt-1">
           Gestion de stock y disponibilidad de productos
         </p>
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+      <div className="bg-white rounded-xl shadow-sm border border-border-default p-4">
         <div className="max-w-sm">
-          <label className="block text-xs font-medium text-gray-600 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1">
             Buscar producto
           </label>
           <input
@@ -291,37 +291,37 @@ export function AdminStockPage() {
             value={busqueda}
             onChange={handleSearchChange}
             placeholder="Nombre del producto..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-danger-50 border border-danger-200 text-danger-600 px-4 py-3 rounded-lg text-sm">
           {getErrorMessage(error)}
         </div>
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-border-default overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-4 py-3 font-medium text-gray-600">
+              <tr className="bg-surface-tertiary border-b border-border-default">
+                <th className="text-left px-4 py-3 font-medium text-text-secondary">
                   Producto
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">
+                <th className="text-left px-4 py-3 font-medium text-text-secondary">
                   Precio
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">
+                <th className="text-left px-4 py-3 font-medium text-text-secondary">
                   Stock
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">
+                <th className="text-left px-4 py-3 font-medium text-text-secondary">
                   Disponible
                 </th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600">
+                <th className="text-right px-4 py-3 font-medium text-text-secondary">
                   Accion
                 </th>
               </tr>
@@ -329,13 +329,13 @@ export function AdminStockPage() {
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={5} className="px-4 py-12 text-center text-text-tertiary">
                     Cargando productos...
                   </td>
                 </tr>
               ) : data?.items.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={5} className="px-4 py-12 text-center text-text-tertiary">
                     No se encontraron productos
                   </td>
                 </tr>
@@ -343,24 +343,24 @@ export function AdminStockPage() {
                 data?.items.map((product: ProductoList, idx: number) => (
                   <tr
                     key={product.id}
-                    className={`hover:bg-gray-50 transition-colors ${
-                      idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                    className={`hover:bg-surface-secondary transition-colors ${
+                      idx % 2 === 0 ? "bg-white" : "bg-surface-secondary/50"
                     } ${!product.disponible ? "opacity-60" : ""}`}
                   >
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-text-primary">
                         {product.nombre}
                       </p>
                       {product.categorias &&
                         product.categorias.length > 0 && (
-                          <p className="text-xs text-gray-400 mt-0.5">
+                          <p className="text-xs text-text-tertiary mt-0.5">
                             {product.categorias
                               .map((c) => c.nombre)
                               .join(", ")}
                           </p>
                         )}
                     </td>
-                    <td className="px-4 py-3 font-medium text-gray-800">
+                    <td className="px-4 py-3 font-medium text-text-primary">
                       ${product.precio_base.toLocaleString("es-AR")}
                     </td>
                     <td className="px-4 py-3">
@@ -373,15 +373,15 @@ export function AdminStockPage() {
                       <span
                         className={`inline-flex items-center gap-1.5 text-xs font-medium ${
                           product.disponible
-                            ? "text-green-600"
-                            : "text-red-600"
+                            ? "text-secondary-600"
+                            : "text-danger-600"
                         }`}
                       >
                         <span
                           className={`w-2 h-2 rounded-full ${
                             product.disponible
-                              ? "bg-green-500"
-                              : "bg-red-500"
+                              ? "bg-secondary-500"
+                              : "bg-danger-500"
                           }`}
                         />
                         {product.disponible ? "Si" : "No"}
@@ -407,8 +407,8 @@ export function AdminStockPage() {
 
         {/* Pagination */}
         {data && data.pages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
-            <p className="text-sm text-gray-600">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border-default bg-surface-tertiary">
+            <p className="text-sm text-text-secondary">
               Pagina {data.page} de {data.pages} ({data.total} productos)
             </p>
             <div className="flex gap-2">

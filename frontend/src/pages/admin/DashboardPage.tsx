@@ -67,12 +67,12 @@ function KpiCard({
   loading: boolean;
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
+    <div className="bg-white rounded-xl shadow-sm border border-border-default p-6">
+      <p className="text-sm font-medium text-text-secondary mb-1">{title}</p>
       {loading ? (
-        <div className="h-8 w-28 bg-gray-200 animate-pulse rounded" />
+        <div className="h-8 w-28 bg-surface-tertiary animate-pulse rounded" />
       ) : (
-        <p className="text-2xl font-bold text-gray-900">
+        <p className="text-2xl font-bold text-text-primary">
           {prefix}
           {value}
         </p>
@@ -97,16 +97,16 @@ function ChartCard({
   height?: number;
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <h3 className="text-base font-semibold text-gray-800 mb-4">{title}</h3>
+    <div className="bg-white rounded-xl shadow-sm border border-border-default p-6">
+      <h3 className="text-base font-semibold text-text-primary mb-4">{title}</h3>
       {loading ? (
         <div
-          className="bg-gray-200 animate-pulse rounded"
+          className="bg-surface-tertiary animate-pulse rounded"
           style={{ height }}
         />
       ) : isEmpty ? (
         <div
-          className="flex items-center justify-center text-gray-400 text-sm"
+          className="flex items-center justify-center text-text-tertiary text-sm"
           style={{ height }}
         >
           Sin datos para el periodo seleccionado
@@ -152,34 +152,34 @@ export function DashboardPage() {
     <div className="space-y-6">
       {/* ── Page header ── */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
-        <p className="text-sm text-gray-500 mt-1">
+        <h2 className="text-2xl font-bold text-text-primary">Dashboard</h2>
+        <p className="text-sm text-text-secondary mt-1">
           Resumen de metricas y rendimiento del negocio
         </p>
       </div>
 
       {/* ── Filters ── */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-wrap items-end gap-4">
+      <div className="bg-white rounded-xl shadow-sm border border-border-default p-4 flex flex-wrap items-end gap-4">
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1">
             Desde
           </label>
           <input
             type="date"
             value={desde}
             onChange={(e) => setDesde(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
+          <label className="block text-xs font-medium text-text-secondary mb-1">
             Hasta
           </label>
           <input
             type="date"
             value={hasta}
             onChange={(e) => setHasta(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
           />
         </div>
         <Button size="sm" onClick={handleApplyFilter}>
@@ -213,7 +213,7 @@ export function DashboardPage() {
 
       {/* ── Granularity selector ── */}
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-gray-600">
+        <span className="text-sm font-medium text-text-secondary">
           Agrupar ventas por:
         </span>
         <div className="flex gap-1">
@@ -223,8 +223,8 @@ export function DashboardPage() {
               onClick={() => setGranularidad(opt.value)}
               className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-colors ${
                 granularidad === opt.value
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-primary-500 text-white"
+                  : "bg-surface-tertiary text-text-secondary hover:bg-border-default"
               }`}
             >
               {opt.label}

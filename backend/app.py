@@ -30,18 +30,6 @@ app = FastAPI(
 )
 
 # ===========================================
-# CORS Middleware
-# ===========================================
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-# ===========================================
 # Rate Limiting (slowapi)
 # ===========================================
 from core.limiter import limiter
@@ -50,6 +38,19 @@ from slowapi.errors import RateLimitExceeded
 
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
+
+
+# ===========================================
+# CORS Middleware (MUY IMPORTANTE: debe ir DESPUÉS de SlowAPI para ser el middleware
+# más externo y así poder interceptar preflight OPTIONS antes que SlowAPI)
+# ===========================================
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.exception_handler(RateLimitExceeded)
 async def rate_limit_handler(request: Request, exc: RateLimitExceeded):

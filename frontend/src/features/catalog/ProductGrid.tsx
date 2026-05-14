@@ -10,12 +10,12 @@ interface ProductGridProps {
 
 function SkeletonCard() {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
-      <div className="aspect-square bg-gray-100" />
+    <div className="bg-white rounded-xl shadow-sm border border-border-subtle overflow-hidden animate-pulse">
+      <div className="aspect-square bg-surface-tertiary" />
       <div className="p-4 space-y-3">
-        <div className="h-4 bg-gray-100 rounded w-3/4" />
-        <div className="h-3 bg-gray-100 rounded w-1/2" />
-        <div className="h-5 bg-gray-100 rounded w-1/3" />
+        <div className="h-4 bg-surface-tertiary rounded w-3/4" />
+        <div className="h-3 bg-surface-tertiary rounded w-1/2" />
+        <div className="h-5 bg-surface-tertiary rounded w-1/3" />
       </div>
     </div>
   );
@@ -24,13 +24,13 @@ function SkeletonCard() {
 function EmptyState({ hasFilters, onClearFilters }: { hasFilters: boolean; onClearFilters: () => void }) {
   return (
     <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-      <svg className="w-20 h-20 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg className="w-20 h-20 text-text-disabled mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
         />
       </svg>
-      <h3 className="text-lg font-medium text-gray-900 mb-1">No encontramos productos</h3>
-      <p className="text-gray-500 mb-4">
+      <h3 className="text-lg font-medium text-text-primary mb-1">No encontramos productos</h3>
+      <p className="text-text-secondary mb-4">
         {hasFilters
           ? "Intentá con otros filtros o términos de búsqueda"
           : "No hay productos disponibles en este momento"}
@@ -38,7 +38,7 @@ function EmptyState({ hasFilters, onClearFilters }: { hasFilters: boolean; onCle
       {hasFilters && (
         <button
           onClick={onClearFilters}
-          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          className="text-sm text-primary-500 hover:text-primary-600 font-medium"
         >
           Limpiar filtros
         </button>

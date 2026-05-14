@@ -68,7 +68,7 @@ export function CatalogPage() {
       />
 
       {/* Title */}
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Catálogo</h1>
+      <h1 className="text-2xl font-bold text-text-primary mb-6">Catálogo</h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar */}
@@ -118,10 +118,10 @@ export function CatalogPage() {
           {/* Error state */}
           {productsError ? (
             <div className="text-center py-12">
-              <p className="text-red-500 mb-4">Error al cargar los productos</p>
+              <p className="text-danger-500 mb-4">Error al cargar los productos</p>
               <button
                 onClick={() => refetchProducts()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
               >
                 Reintentar
               </button>

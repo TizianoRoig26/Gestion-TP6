@@ -90,10 +90,10 @@ function AdminSidebar() {
   );
 
   return (
-    <aside className="w-64 bg-gray-900 text-white flex flex-col shrink-0">
+    <aside className="w-64 bg-primary-800 text-white flex flex-col shrink-0">
       {/* Logo / Brand */}
-      <div className="px-6 py-5 border-b border-gray-700">
-        <NavLink to="/admin" className="text-lg font-bold text-blue-400">
+      <div className="px-6 py-5 border-b border-primary-700">
+        <NavLink to="/admin" className="text-lg font-bold text-primary-300">
           Food Store Admin
         </NavLink>
       </div>
@@ -108,8 +108,8 @@ function AdminSidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                  ? "bg-primary-600/80 text-white"
+                  : "text-primary-200 hover:bg-primary-700/50 hover:text-white"
               }`
             }
           >
@@ -120,10 +120,10 @@ function AdminSidebar() {
       </nav>
 
       {/* Back to site */}
-      <div className="px-3 py-4 border-t border-gray-700">
+      <div className="px-3 py-4 border-t border-primary-700">
         <NavLink
           to="/"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-primary-200 hover:bg-primary-700/50 hover:text-white transition-colors"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -145,16 +145,16 @@ function AdminHeader() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-      <h1 className="text-lg font-semibold text-gray-800">Panel de Administración</h1>
+    <header className="bg-surface border-b border-border-default px-6 py-3 flex items-center justify-between">
+      <h1 className="text-lg font-semibold text-text-primary">Panel de Administración</h1>
       <div className="flex items-center gap-3">
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-text-secondary">
           {user?.nombre}
           <span className="ml-2 inline-flex items-center gap-1">
             {user?.roles.map((role) => (
               <span
                 key={role}
-                className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium"
+                className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full font-medium"
               >
                 {role}
               </span>
@@ -163,7 +163,7 @@ function AdminHeader() {
         </span>
         <button
           onClick={handleLogout}
-          className="text-sm text-gray-500 hover:text-red-600 transition-colors"
+          className="text-sm text-text-tertiary hover:text-danger-600 transition-colors"
         >
           Cerrar sesión
         </button>
@@ -174,7 +174,7 @@ function AdminHeader() {
 
 export function AdminLayout() {
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-surface-secondary">
       <AdminSidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader />

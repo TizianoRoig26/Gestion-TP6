@@ -6,41 +6,41 @@ interface OrderStatusBadgeProps {
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
   PENDIENTE: {
     label: "Pendiente",
-    bg: "bg-yellow-100",
-    text: "text-yellow-800",
+    bg: "bg-accent-100",
+    text: "text-accent-600",
   },
   CONFIRMADO: {
     label: "Confirmado",
-    bg: "bg-blue-100",
-    text: "text-blue-800",
+    bg: "bg-primary-100",
+    text: "text-primary-600",
   },
   EN_PREPARACION: {
     label: "En preparación",
-    bg: "bg-orange-100",
-    text: "text-orange-800",
+    bg: "bg-accent-100",
+    text: "text-accent-600",
   },
   EN_CAMINO: {
     label: "En camino",
-    bg: "bg-cyan-100",
-    text: "text-cyan-800",
+    bg: "bg-primary-100",
+    text: "text-primary-600",
   },
   ENTREGADO: {
     label: "Entregado",
-    bg: "bg-green-100",
-    text: "text-green-800",
+    bg: "bg-secondary-100",
+    text: "text-secondary-600",
   },
   CANCELADO: {
     label: "Cancelado",
-    bg: "bg-red-100",
-    text: "text-red-800",
+    bg: "bg-danger-100",
+    text: "text-danger-600",
   },
 };
 
 export function OrderStatusBadge({ estado, size = "md" }: OrderStatusBadgeProps) {
   const config = STATUS_CONFIG[estado] || {
     label: estado,
-    bg: "bg-gray-100",
-    text: "text-gray-800",
+    bg: "bg-surface-tertiary",
+    text: "text-text-primary",
   };
 
   const sizeClasses = size === "sm" ? "px-2 py-0.5 text-xs" : "px-3 py-1 text-sm";

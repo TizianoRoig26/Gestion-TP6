@@ -33,10 +33,10 @@ function TreeNode({
         {hasChildren ? (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-0.5 hover:bg-gray-100 rounded transition-colors"
+            className="p-0.5 hover:bg-surface-tertiary rounded transition-colors"
           >
             <svg
-              className={`w-4 h-4 text-gray-400 transition-transform ${
+              className={`w-4 h-4 text-text-tertiary transition-transform ${
                 isExpanded ? "rotate-90" : ""
               }`}
               fill="none"
@@ -58,8 +58,8 @@ function TreeNode({
           onClick={() => onSelect(isSelected ? undefined : node.id)}
           className={`flex-1 text-left px-2 py-1 text-sm rounded transition-colors ${
             isSelected
-              ? "bg-blue-50 text-blue-700 font-medium"
-              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              ? "bg-primary-50 text-primary-700 font-medium"
+              : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
           }`}
         >
           {node.nombre}
@@ -67,7 +67,7 @@ function TreeNode({
       </div>
 
       {hasChildren && isExpanded && (
-        <ul className="ml-4 border-l border-gray-200 pl-2 mt-1 space-y-0.5">
+        <ul className="ml-4 border-l border-border-default pl-2 mt-1 space-y-0.5">
           {children.map((child) => (
             <TreeNode
               key={child.id}
@@ -93,13 +93,13 @@ export function CategoryTree({
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-900 mb-3">Categorías</h3>
+      <h3 className="text-sm font-semibold text-text-primary mb-3">Categorías</h3>
       <button
         onClick={() => onSelect(undefined)}
         className={`w-full text-left px-3 py-1.5 text-sm rounded transition-colors mb-1 ${
           selectedId === undefined
-            ? "bg-blue-50 text-blue-700 font-medium"
-            : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            ? "bg-primary-50 text-primary-700 font-medium"
+            : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
         }`}
       >
         Todas las categorías

@@ -9,13 +9,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles = {
   primary:
-    "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
+    "bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-400",
   secondary:
-    "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-400",
+    "bg-surface-secondary text-text-primary hover:bg-surface-tertiary focus:ring-primary-400",
   danger:
-    "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+    "bg-danger-500 text-white hover:bg-danger-600 focus:ring-danger-400",
   ghost:
-    "bg-transparent text-gray-600 hover:bg-gray-100 focus:ring-gray-400",
+    "bg-transparent text-text-secondary hover:bg-surface-tertiary focus:ring-primary-400",
 };
 
 const sizeStyles = {
@@ -37,9 +37,9 @@ export function Button({
     <button
       disabled={disabled || isLoading}
       className={`
-        inline-flex items-center justify-center font-medium rounded-lg
+        inline-flex items-center justify-center font-medium rounded-button
         transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2
-        disabled:opacity-50 disabled:cursor-not-allowed
+        disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${className}

@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useProduct } from "../shared/api/catalogos";
 import { ProductInfo } from "../features/catalog/ProductInfo";
 import { IngredientList } from "../features/catalog/IngredientList";
 import { AddToCartButton } from "../features/catalog/AddToCartButton";
+
+const PLACEHOLDER_IMG = "/images/imagen no encontrada.svg";
 
 function DetailSkeleton() {
   return (
@@ -25,6 +28,7 @@ function DetailSkeleton() {
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const productoId = id ? Number(id) : undefined;
+  const [imgError, setImgError] = useState(false);
 
   const {
     data: producto,
@@ -78,20 +82,19 @@ export function ProductDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Image */}
         <div className="aspect-square bg-surface-secondary rounded-xl flex items-center justify-center p-12">
-          {producto.imagen_url ? (
+          {!producto.imagen_url || imgError ? (
             <img
-              src={producto.imagen_url}
+              src={PLACEHOLDER_IMG}
               alt={producto.nombre}
               className="w-full h-full object-contain"
             />
           ) : (
-            <div className="text-text-disabled">
-              <svg className="w-32 h-32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
+            <img
+              src={producto.imagen_url}
+              alt={producto.nombre}
+              onError={() => setImgError(true)}
+              className="w-full h-full object-contain"
+            />
           )}
         </div>
 

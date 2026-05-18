@@ -23,8 +23,13 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo + Navigation */}
           <div className="flex items-center gap-8">
-            <Link to="/" className="text-xl font-bold text-primary-500">
-              Food Store
+            <Link to="/" className="flex items-center gap-2 text-xl font-bold text-primary-500">
+              <img
+                src="/images/logo-aji.svg"
+                alt="BigPepper"
+                className="size-10"
+              />
+              BigPepper
             </Link>
             <nav className="hidden md:flex items-center gap-6">
               {navLinks.map((link) => (

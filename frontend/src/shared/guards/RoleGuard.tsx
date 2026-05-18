@@ -1,11 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import type { ReactNode } from "react";
 
 interface RoleGuardProps {
   allowedRoles: string[];
+  children?: ReactNode;
 }
 
-export function RoleGuard({ allowedRoles }: RoleGuardProps) {
+export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -31,5 +33,5 @@ export function RoleGuard({ allowedRoles }: RoleGuardProps) {
     );
   }
 
-  return <Outlet />;
+  return children ? <>{children}</> : <Outlet />;
 }

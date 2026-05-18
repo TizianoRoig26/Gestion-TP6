@@ -119,14 +119,20 @@ def logout(request: LogoutRequest, session: Session = Depends(get_session)):
 
 
 @router.get("/me", response_model=UserResponse)
-def get_me(user: Usuario = Depends(get_current_user)):
-    """Get current user info."""
+def get_me(
+    user: Usuario = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    """Get current user info including roles."""
+    auth_service = AuthService(session)
+    roles = auth_service.get_user_roles(user.id)
     return UserResponse(
         id=user.id,
         email=user.email,
         nombre=user.nombre,
         telefono=user.telefono,
         credo_activo=user.credo_activo,
+        roles=roles,
         creado_en=str(user.creado_en),
     )
 

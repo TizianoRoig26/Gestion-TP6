@@ -4,6 +4,7 @@ import { Header } from "../widgets/Header";
 import { Footer } from "../widgets/Footer";
 import { AdminLayout } from "../widgets/AdminLayout";
 import { AdminRoute } from "../shared/guards/AdminRoute";
+import { RoleGuard } from "../shared/guards/RoleGuard";
 import { HomePage } from "../pages/HomePage";
 import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
@@ -127,10 +128,38 @@ export const router = createBrowserRouter([
         element: <AdminLayout />,
         children: [
           { path: "/admin", element: <DashboardPage /> },
-          { path: "/admin/usuarios", element: <AdminUsuariosPage /> },
-          { path: "/admin/pedidos", element: <AdminPedidosPage /> },
-          { path: "/admin/catalogo", element: <AdminCatalogoPage /> },
-          { path: "/admin/stock", element: <AdminStockPage /> },
+          {
+            path: "/admin/usuarios",
+            element: (
+              <RoleGuard allowedRoles={["ADMIN"]}>
+                <AdminUsuariosPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: "/admin/pedidos",
+            element: (
+              <RoleGuard allowedRoles={["ADMIN", "PEDIDOS"]}>
+                <AdminPedidosPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: "/admin/catalogo",
+            element: (
+              <RoleGuard allowedRoles={["ADMIN", "STOCK"]}>
+                <AdminCatalogoPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: "/admin/stock",
+            element: (
+              <RoleGuard allowedRoles={["ADMIN", "STOCK"]}>
+                <AdminStockPage />
+              </RoleGuard>
+            ),
+          },
         ],
       },
     ],

@@ -19,6 +19,16 @@ El sistema SHALL mostrar un layout de administración con sidebar de navegación
 - **WHEN** un usuario con rol PEDIDOS accede a `/admin/*`
 - **THEN** el sidebar solo muestra: Dashboard, Pedidos
 
+#### Scenario: Protección de ruta por rol
+- **WHEN** un usuario con rol STOCK navega a `/admin/usuarios`
+- **THEN** el sistema muestra pantalla 403 "No tenés permisos para esta acción"
+- **WHEN** un usuario con rol PEDIDOS navega a `/admin/stock`
+- **THEN** el sistema muestra pantalla 403
+- **WHEN** un usuario con rol STOCK navega a `/admin/stock`
+- **THEN** el sistema muestra la página de stock
+- **WHEN** un usuario con rol PEDIDOS navega a `/admin/pedidos`
+- **THEN** el sistema muestra la página de gestión de pedidos
+
 ### Requirement: Dashboard con KPIs y gráficos
 El sistema SHALL mostrar un dashboard con indicadores clave y gráficos visuales usando recharts.
 
@@ -115,6 +125,31 @@ El sistema SHALL mostrar una página para gestionar el catálogo y stock de prod
 - **THEN** se muestra confirmación antes de cambiar
 - **THEN** se actualiza vía PATCH /productos/{id} con { disponible }
 - **THEN** el cambio se refleja inmediatamente en la UI
+
+### Requirement: RoleGuard como wrapper de componentes
+El sistema SHALL proveer un componente `RoleGuard` que funcione tanto como layout route como wrapper de componentes para proteger rutas específicas.
+
+#### Scenario: Uso como wrapper
+- **WHEN** se usa `<RoleGuard allowedRoles={["ADMIN"]}><Componente /></RoleGuard>`
+- **THEN** renderiza `<Componente />` solo si el usuario tiene rol ADMIN
+- **THEN** muestra pantalla 403 si no tiene permiso
+
+#### Scenario: Uso como layout route
+- **WHEN** se usa `<RoleGuard allowedRoles={["ADMIN"]} />` como element de ruta anidada
+- **THEN** renderiza `<Outlet />` solo si el usuario tiene rol ADMIN
+
+### Requirement: Protección granular de rutas admin
+El sistema SHALL proteger cada ruta del panel admin según el rol requerido, no solo a nivel de UI (sidebar) sino también a nivel de navegación.
+
+#### Scenario: Rutas protegidas por rol
+- **WHEN** un usuario con rol ADMIN navega a cualquier ruta admin
+- **THEN** puede acceder a todas las rutas
+- **WHEN** un usuario con rol STOCK navega a `/admin/stock` o `/admin/catalogo`
+- **THEN** puede acceder a esas rutas
+- **WHEN** un usuario con rol PEDIDOS navega a `/admin/pedidos`
+- **THEN** puede acceder a esa ruta
+- **WHEN** un usuario con rol CLIENT navega a cualquier `/admin/*`
+- **THEN** recibe pantalla 403
 
 ## Reglas de Negocio
 
